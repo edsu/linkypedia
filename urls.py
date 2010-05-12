@@ -1,17 +1,11 @@
 from django.conf.urls.defaults import *
+from django.views.static import serve
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+urlpatterns = patterns(
+    'linkypedia.web.views',
+    url(r'^$', 'links', name='links'),
+    url(r'^(?P<page_num>\d+)/$', 'links', name='links_page'),
 
-urlpatterns = patterns('',
-    # Example:
-    # (r'^linkypedia/', include('linkypedia.foo.urls')),
-
-    # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
-    # to INSTALLED_APPS to enable admin documentation:
-    # (r'^admin/doc/', include('django.contrib.admindocs.urls')),
-
-    # Uncomment the next line to enable the admin:
-    # (r'^admin/', include(admin.site.urls)),
+    url(r'^static/(?P<path>.*)$', serve, {'document_root': 'static'}),
 )
+
