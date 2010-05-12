@@ -17,3 +17,8 @@ tr.odd {
 tr.even {
     background: #ffffff;
 }
+
+a:link {
+    text-decoration: none;
+    color: black;
+}
