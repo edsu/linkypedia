@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<table>
+    <tr>
+        <th>name</th>
+        <th>last checked</th>
+    </tr>
+    {% for host in hosts %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td class="name">
+            <a href="{% url links host.name %}">
+                {{ host.name }}
+            </a>
+        </td>
+        <td class="checked">
+            {{ host.last_checked }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

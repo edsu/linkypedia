@@ -5,9 +5,26 @@ body {
 }
 
 #header {
-    font-size: 18pt;
-    color: orange;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 15px;
     text-align: center;
+}
+
+#logo {
+    font-size: 22pt;
+    margin: auto;
+    background: #cccccc;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px;
+    width: 140px;
+    border: thin groove #cccccc;
+}
+
+#logo a {
+    color: white;
 }
 
 tr.odd {
@@ -18,7 +35,11 @@ tr.even {
     background: #ffffff;
 }
 
-a:link {
+td {
+    font-size: 10pt;
+}
+
+a {
     text-decoration: none;
     color: black;
 }
