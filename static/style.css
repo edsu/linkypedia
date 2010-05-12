@@ -1,0 +1,19 @@
+body {
+    font-family: helvetica;
+    font-size 12pt;
+    margin: 10px 5% 5% 5%;
+}
+
+#header {
+    font-size: 18pt;
+    color: orange;
+    text-align: center;
+}
+
+tr.odd {
+    background: #eeeeee;
+}
+
+tr.even {
+    background: #ffffff;
+}
