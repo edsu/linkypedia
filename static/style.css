@@ -7,24 +7,20 @@ body {
 #header {
     margin-left: auto;
     margin-right: auto;
-    margin-top: 15px;
+    margin: 15px;
     text-align: center;
 }
 
 #logo {
     font-size: 22pt;
+    font-style: italic;
     margin: auto;
-    background: #cccccc;
-    color: white;
+    background: #eeeeee;
+    color: black;
     text-align: center;
-    font-weight: bold;
-    padding: 10px;
+    padding: 5px;
     width: 140px;
-    border: thin groove #cccccc;
-}
-
-#logo a {
-    color: white;
+    border: thin groove #eeeeee;
 }
 
 tr.odd {

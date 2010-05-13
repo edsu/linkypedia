@@ -1,5 +1,10 @@
 #!/usr/bin/env python
 
+"""
+A module for extracting links from wikipedia using wikipedia's External links
+search: http://en.wikipedia.org/w/index.php?title=Special:LinkSearch
+"""
+
 import sys
 import urllib2
 

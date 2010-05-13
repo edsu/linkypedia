@@ -10,7 +10,7 @@ def hosts(request):
 def links(request, host, page_num=1):
     try:
         host = m.Host.objects.get(name=host)
-        links = m.Link.objects.all()
+        links = m.Link.objects.filter(host=host)
         paginator = Paginator(links, 100)
         page = paginator.page(int(page_num))
         links = page.object_list
