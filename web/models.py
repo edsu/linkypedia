@@ -17,7 +17,7 @@ class Host(m.Model):
 
     def last_checked(self):
         if self.crawls.count() > 0:
-            return self.crawls.all()[0].created
+            return self.crawls.all()[0].started
         return None
 
 class Crawl(m.Model):
