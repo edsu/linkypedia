@@ -14,7 +14,7 @@
     {% for website in websites %}
     <a href="{% url website website.id %}">
         {% if website.favicon_url %}
-        <img src="{{ website.favicon_url }}" class="favicon" />
+        <img src="{{ website.favicon_url }}" class="favicon" title="{{ website.name }}"/>
         {% else %}
         {{ website.url }}
         {% endif %}
