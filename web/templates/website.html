@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<table id="website_summary">
+    <tr class="even">
+        <td>Site:</td>
+        <td>
+            {{ website.name }}
+        </td>
+    </tr>
+    <tr class="odd">
+        <td>URL:</td>
+        <td><a href="{{ website.url }}">{{ website.url }}</a></td>
+    </tr>
+    <tr class="even">
+        <td>Last Crawl:</td>
+        <td>
+        {% if website.last_crawl %}
+        {{ website.last_crawl }}</td>
+        {% else %}
+        <img src="/static/spinner.gif" title="waiting for crawl to complete"/>
+        {% endif %}
+        </td> 
+    </tr>
+</table>
+
+<table>
+    {% for link in links %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td class="link_source">
+            <a href="{{ link.source }}">
+                {{ link.source }}
+            </a>
+        </td>
+        <td class="link_target">
+            <a href="{{ link.target }}">
+                {{ link.target }}
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

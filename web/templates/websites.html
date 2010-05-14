@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div id="add_site">
+<form action="" method="get">
+    <input type="text" name="new_website_url">
+    <input type="submit" name="website" value="add a site">
+    {% csrf_token %}
+</form>
+</div>
+
+<div id="websites">
+    {% for website in websites %}
+    <a href="{% url website website.id %}">
+        {% if website.favicon_url %}
+        <img src="{{ website.favicon_url }}" class="favicon" />
+        {% else %}
+        {{ website.url }}
+        {% endif %}
+    </a>
+    {% endfor %}
+</div>
+{% endblock %}

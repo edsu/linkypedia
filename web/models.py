@@ -9,11 +9,17 @@ class Link(m.Model):
     created = m.DateTimeField(auto_now=True)
     source = m.TextField()
     target = m.TextField()
-    host = m.ForeignKey('Host', related_name='links')
+    website = m.ForeignKey('Website', related_name='links')
 
-class Host(m.Model):
-    name = m.TextField(primary_key=True)
+class Website(m.Model):
+    url = m.TextField()
+    name = m.TextField()
+    favicon_url = m.TextField()
     created = m.DateTimeField(auto_now=True)
+
+    @m.permalink
+    def get_absolute_url(self):
+        return ('website', (), {'website_id': str(self.id)})
 
     def last_checked(self):
         if self.crawls.count() > 0:
@@ -23,7 +29,7 @@ class Host(m.Model):
 class Crawl(m.Model):
     started = m.DateTimeField(null=True)
     finished = m.DateTimeField(null=True)
-    host = m.ForeignKey('Host', related_name='crawls')
+    host = m.ForeignKey('Website', related_name='crawls')
 
     def run(self):
         """

@@ -13,8 +13,7 @@ logging.basicConfig(
 
 class Command(BaseCommand):
 
-    def handle(self, target, **options):
-        host_name = urlparse.urlparse(target).netloc
-        host, created = m.Host.objects.get_or_create(name=host_name)
-        crawl = m.Crawl(host=host)
+    def handle(self, website_url, **options):
+        website, created = m.Website.objects.get_or_create(url=website_url)
+        crawl = m.Crawl(website=website)
         crawl.run()

@@ -15,12 +15,22 @@ body {
     font-size: 22pt;
     font-style: italic;
     margin: auto;
-    background: #eeeeee;
     color: black;
     text-align: center;
     padding: 5px;
     width: 140px;
-    border: thin groove #eeeeee;
+}
+
+#content {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#add_site {
+    text-align: center;
+    width: 40%;
+    margin: auto;
 }
 
 tr.odd {
@@ -31,11 +41,30 @@ tr.even {
     background: #ffffff;
 }
 
-td {
-    font-size: 10pt;
+td.favicon {
+    text-align: center;
 }
 
 a {
     text-decoration: none;
     color: black;
+}
+
+#websites {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+#website_summary {
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+img.favicon {
+    vertical-align: middle;
+    margin-left: 10px;
+    margin-right: 10px;
 }

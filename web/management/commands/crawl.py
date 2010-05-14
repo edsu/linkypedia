@@ -17,10 +17,10 @@ class Command(BaseCommand):
     def handle(self, **options):
         logging.info("starting crawl daemon")
         while True:
-            # look for new hosts to crawl
-            new_hosts = m.Host.objects.filter(crawls=None)
-            for host in new_hosts:
-                logging.info("found new host to crawl: %s" % host.name)
-                crawl = m.Crawl(host=host)
+            # look for new websites to crawl
+            new_websites = m.Website.objects.filter(crawls=None)
+            for website in new_websites:
+                logging.info("found new website to crawl: %s" % website.name)
+                crawl = m.Crawl(website=website)
                 crawl.run()
             time.sleep(10)
