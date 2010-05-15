@@ -18,7 +18,6 @@ body {
     color: black;
     text-align: center;
     padding: 5px;
-    width: 140px;
 }
 
 #content {
@@ -51,7 +50,6 @@ a {
 }
 
 #websites {
-    width: 60%;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
@@ -61,6 +59,14 @@ a {
     width: 60%;
     margin-left: auto;
     margin-right: auto;
+    border-style: groove;
+    border-color: #eeeeee;
+    margin-bottom: 15px;
+    padding: 3px;
+}
+
+#website_links {
+    font-size: 10pt;
 }
 
 img.favicon {

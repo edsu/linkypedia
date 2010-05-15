@@ -3,7 +3,7 @@
 {% block content %}
 
 <div id="add_site">
-<form action="" method="get">
+<form action="" method="post">
     <input type="text" name="new_website_url">
     <input type="submit" name="website" value="add a site">
     {% csrf_token %}
@@ -11,14 +11,20 @@
 </div>
 
 <div id="websites">
-    {% for website in websites %}
-    <a href="{% url website website.id %}">
-        {% if website.favicon_url %}
-        <img src="{{ website.favicon_url }}" class="favicon" title="{{ website.name }}"/>
-        {% else %}
-        {{ website.url }}
-        {% endif %}
-    </a>
+    <table id="websites">
+        {% for website in websites %}
+        <tr>
+        <td>
+            <a href="{% url website website.id %}">
+            {% if website.favicon_url %}
+            <img src="{{ website.favicon_url }}" class="favicon" title="{{ website.name }}"/>
+            {% endif %}
+            {{ website.name }}
+            ({{ website.links.count }})
+            </a>
+        </td>
+        </tr>
     {% endfor %}
+    </table>
 </div>
 {% endblock %}

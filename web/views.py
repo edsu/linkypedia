@@ -13,13 +13,11 @@ from linkypedia.web import models as m
 def websites(request):
     # create the website instance if one was submitted and
     # redirect to the new website view
-    new_website_url = request.GET.get('new_website_url', None)
+    new_website_url = request.POST.get('new_website_url', None)
     if new_website_url:
         website = _setup_new_website(new_website_url)
-        if website:
-            return HttpResponseRedirect(website.get_absolute_url())
-
-    # otherwise present a list of websites that are managed
+        return HttpResponseRedirect('/')
+    
     websites = m.Website.objects.all().order_by('name')
     return render_to_response('websites.html', dictionary=locals(),
             context_instance=RequestContext(request))
