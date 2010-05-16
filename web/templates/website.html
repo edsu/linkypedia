@@ -32,8 +32,8 @@
     {% for link in links %}
     <tr class="{% cycle 'odd' 'even' %}">
         <td class="link_source">
-            <a href="{{ link.source }}">
-                {{ link.source }}
+            <a href="{{ link.wikipedia_page.url }}">
+                {{ link.wikipedia_page.title }}
             </a>
         </td>
         <td class="link_target">
@@ -41,6 +41,7 @@
                 {{ link.target }}
             </a>
         </td>
+        <td>{{ link.wikipedia_page.categories.all|join:", " }}</td>
     </tr>
     {% endfor %}
 </table>

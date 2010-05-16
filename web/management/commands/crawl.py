@@ -4,7 +4,7 @@ import urlparse
 
 from django.core.management.base import BaseCommand
 
-from linkypedia import links
+from linkypedia.crawl import crawl
 from linkypedia.web import models as m
 
 logging.basicConfig(
@@ -21,6 +21,5 @@ class Command(BaseCommand):
             new_websites = m.Website.objects.filter(crawls=None)
             for website in new_websites:
                 logging.info("found new website to crawl: %s" % website.name)
-                crawl = m.Crawl(website=website)
-                crawl.run()
+                crawl(website)
             time.sleep(10)
