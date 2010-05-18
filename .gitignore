@@ -1,3 +1,4 @@
 *.pyc
 linkypedia.db
 *.log
+linkypedia/settings.py

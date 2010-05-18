@@ -12,6 +12,18 @@ body {
     text-align: center;
 }
 
+#footer {
+    margin-top: 20px;
+    width: 60%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 15px;
+    padding: 5px;
+    font-style: italic;
+    text-align: center;
+    background-color: #eeeeee;
+}
+
 #logo {
     font-size: 22pt;
     font-style: italic;
@@ -52,6 +64,18 @@ tr.even {
     background: #ffffff;
 }
 
+td {
+    vertical-align: top;
+}
+
+td.wikipedia_page {
+    word-break: break-all;
+}
+
+td.link_count {
+    text-align: right;
+}
+
 td.favicon {
     text-align: center;
 }
@@ -78,9 +102,10 @@ a {
 
 #website_details {
     font-size: 10pt;
-    width: 100%;
+    width: 60%;
     margin-left: auto;
     margin-right: auto;
+    margin-bottom: 15px;
 }
 
 img.favicon {
@@ -146,4 +171,16 @@ img.favicon {
     margin-left: auto;
     margin-right: auto;
     padding-bottom: 15px;
+}
+
+.page_link {
+    border: thin solid gray;
+    background-color: white;
+    padding: 2px;
+    font-size: 11pt;
+}
+
+.current_page {
+    background-color: lightblue;
+    color: black;
 }

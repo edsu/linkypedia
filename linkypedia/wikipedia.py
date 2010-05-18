@@ -2,6 +2,7 @@
 Functions for getting info from wikipedia.
 """
 
+import re
 import sys
 import json
 import urllib
@@ -9,6 +10,13 @@ import logging
 import urllib2
 
 import BeautifulSoup
+
+def url_to_title(url):
+    match = re.match(r'http://.+/wiki/(.+)$', url)
+    if match:
+        return match.group(1)
+    else:
+        return None
 
 def info(title):
     logging.info("looking up info for %s at wikipedia" % title)

@@ -10,6 +10,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
 from linkypedia.web import models as m
+from linkypedia.paginator import DiggPaginator
 
 def websites(request):
     # create the website instance if one was submitted and
@@ -30,21 +31,28 @@ def website_summary(request, website_id):
     title = "website: %s" % website.url
     return render_to_response('website_summary.html', dictionary=locals())
 
-def website_links(request, website_id, page_num=1):
+def website_pages(request, website_id, page_num=1):
     website = m.Website.objects.get(id=website_id)
-    links = m.Link.objects.filter(website=website)
-    paginator = Paginator(links, 100)
+
+    wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
+    wikipedia_pages = wikipedia_pages.annotate(Count('links'))
+    wikipedia_pages = wikipedia_pages.order_by('-links__count')
+    wikipedia_pages = wikipedia_pages.distinct()
+
+    paginator = DiggPaginator(wikipedia_pages, 100)
     page = paginator.page(int(page_num))
-    links = page.object_list
-    tab = 'links'
-    tab_summary = "Links for %s" % website.name 
+    wikipedia_pages = page.object_list
+
+    tab = 'pages'
+    tab_summary = "wikipedia pages %s" % website.name 
     title = "website: %s" % website.url
-    return render_to_response('website_links.html', dictionary=locals())
+
+    return render_to_response('website_pages.html', dictionary=locals())
 
 def website_categories(request, website_id, page_num=1):
     website = get_object_or_404(m.Website, id=website_id)
     categories = website.categories().order_by('-pages__count')
-    paginator = Paginator(categories, 100)
+    paginator = DiggPaginator(categories, 100)
     page = paginator.page(int(page_num))
     categories = page.object_list
     tab = 'categories'

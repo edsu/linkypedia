@@ -3,27 +3,27 @@
 {% block tab_content %}
 
 <table id="website_summary">
-    <tr class="even">
+    <tr class="odd">
         <td>Website Title:</td>
         <td>{{ website.name }}</td>
     </tr>
-    <tr class="odd">
+    <tr class="even">
         <td>Website URL:</td>
         <td><a href="{{ website.url }}">{{ website.url }}</a></td>
     </tr>
-    <tr class="even">
+    <tr class="odd">
         <td>Wikipedia Links:</td>
         <td>{{ website.links.count }}</td>
     </tr>
-    <tr class="odd">
+    <tr class="even">
         <td>Wikipedia Pages:</td>
         <td>{{ website.wikipedia_pages.count }}</td>
     </tr>
-    <tr class="even">
+    <tr class="odd">
         <td>Wikipedia Categories</td>
         <td>{{ website.categories.all.count }}</td>
     </tr>
-    <tr class="odd">
+    <tr class="even">
         <td>Last Crawl:</td>
         <td>
         {% if website.last_checked %}

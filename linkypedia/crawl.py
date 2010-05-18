@@ -1,6 +1,8 @@
 import logging
 import datetime
 
+from django.db import reset_queries
+
 from linkypedia.web import models as m
 from linkypedia import wikipedia
 
@@ -36,6 +38,7 @@ def crawl(website):
 
         link.last_checked = datetime.datetime.now()
         link.save()
+        reset_queries()
 
     crawl.finished = datetime.datetime.now()
     crawl.save()

@@ -23,7 +23,8 @@ class WikipediaPage(m.Model):
     def populate_from_wikipedia(self, force=False):
         if not force and self.title:
             return
-        info = wikipedia.info(self.url.split('/')[-1])
+        title_escaped = wikipedia.url_to_title(self.url)
+        info = wikipedia.info(title_escaped)
         self.title = info['title']
         for cat in wikipedia.categories(self.title):
             title = cat['title'].lstrip('Category:')

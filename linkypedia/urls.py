@@ -8,11 +8,11 @@ urlpatterns = patterns(
     url(r'^websites/(?P<website_id>\d+)/$', 'website_summary',
         name='website_summary'),
 
-    url(r'^websites/(?P<website_id>.+)/links/$', 'website_links',
-        name='website_links'),
+    url(r'^websites/(?P<website_id>.+)/pages/$', 'website_pages',
+        name='website_pages'),
 
-    url(r'^websites/(?P<website_id>.+)/links/(?P<page_num>\d+)/$', 
-        'website_links', name='website_links_page'),
+    url(r'^websites/(?P<website_id>.+)/pages/(?P<page_num>\d+)/$', 
+        'website_pages', name='website_pages_page'),
 
     url(r'^websites/(?P<website_id>.+)/categories/$', 'website_categories',
         name='website_categories'),
