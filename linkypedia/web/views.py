@@ -3,10 +3,11 @@ import urlparse
 
 from lxml import etree
 
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.paginator import Paginator
-from django.shortcuts import render_to_response
+from django.db.models import Count
 from django.template import RequestContext
+from django.core.paginator import Paginator
+from django.http import HttpResponse, HttpResponseRedirect
+from django.shortcuts import render_to_response, get_object_or_404
 
 from linkypedia.web import models as m
 
@@ -22,15 +23,34 @@ def websites(request):
     return render_to_response('websites.html', dictionary=locals(),
             context_instance=RequestContext(request))
 
+def website_summary(request, website_id):
+    website = get_object_or_404(m.Website, id=website_id)
+    tab = 'summary'
+    tab_summary = "Summary Information for %s" % website.name
+    title = "website: %s" % website.url
+    return render_to_response('website_summary.html', dictionary=locals())
 
-def website(request, website_id, page_num=1):
+def website_links(request, website_id, page_num=1):
     website = m.Website.objects.get(id=website_id)
     links = m.Link.objects.filter(website=website)
     paginator = Paginator(links, 100)
     page = paginator.page(int(page_num))
     links = page.object_list
-    return render_to_response('website.html', dictionary=locals())
+    tab = 'links'
+    tab_summary = "Links for %s" % website.name 
+    title = "website: %s" % website.url
+    return render_to_response('website_links.html', dictionary=locals())
 
+def website_categories(request, website_id, page_num=1):
+    website = get_object_or_404(m.Website, id=website_id)
+    categories = website.categories().order_by('-pages__count')
+    paginator = Paginator(categories, 100)
+    page = paginator.page(int(page_num))
+    categories = page.object_list
+    tab = 'categories'
+    tab_summary = "Categories for %s" % website.name 
+    title = "website: %s" % website.url
+    return render_to_response('website_categories.html', dictionary=locals())
 
 def _setup_new_website(url):
     websites = m.Website.objects.filter(url=url)
@@ -55,12 +75,10 @@ def _setup_new_website(url):
         website.save()
 
     except urllib2.HTTPError, e:
-        print e
         # can't get URL
         pass
 
     except ValueError, e:
-        print e
         # bad URL
         pass
 

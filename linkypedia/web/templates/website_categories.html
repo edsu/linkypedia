@@ -1,0 +1,24 @@
+{% extends "website.html" %}
+
+{% block tab_content %}
+
+<table id="website_details">
+    <tr>
+        <th>WikipediaCategories</th>
+        <th>Wikipedia<br />Pages</th>
+    </tr>
+    {% for category in categories %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td class="link_source">
+            <a href="http://en.wikipedia.org/wiki/Category:{{ category.title }}">
+                {{ category.title }}
+            </a>
+        </td>
+        <td style="text-align: right;">
+            {{ category.pages__count }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}

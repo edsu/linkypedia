@@ -7,7 +7,8 @@ body {
 #header {
     margin-left: auto;
     margin-right: auto;
-    margin: 15px;
+    margin-top: 15px;
+    margin-bottom: 5px;
     text-align: center;
 }
 
@@ -18,6 +19,17 @@ body {
     color: black;
     text-align: center;
     padding: 5px;
+}
+
+#slogan {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 15px;
+    padding: 5px;
+    font-style: italic;
+    text-align: center;
+    background-color: #eeeeee;
 }
 
 #content {
@@ -59,18 +71,79 @@ a {
     width: 60%;
     margin-left: auto;
     margin-right: auto;
-    border-style: groove;
     border-color: #eeeeee;
     margin-bottom: 15px;
     padding: 3px;
 }
 
-#website_links {
+#website_details {
     font-size: 10pt;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 img.favicon {
     vertical-align: middle;
     margin-left: 10px;
     margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    border: none;
+}
+
+#tab_pane {
+    width: 90%;
+    text-align: center;
+    margin: auto;
+}
+
+#tabs {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.inactive_tab, .active_tab {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.inactive_tab {
+    background-color: white;
+    border-left: medium solid #eeeeee;
+    border-right: medium solid #eeeeee;
+    border-top: medium solid #eeeeee;
+}
+
+.active_tab {
+    background-color: #eeeeee;
+}
+
+#tab_summary {
+    background-color: #eeeeee;
+    margin: auto;
+    padding: 10px;
+}
+
+#tab_content {
+    padding-top: 15px;
+    border: thick solid #eeeeee;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#title {
+    text-align: center;
+    font-size: 18pt;
+    font-weight: bold;
+    font-style: italic;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 15px;
 }

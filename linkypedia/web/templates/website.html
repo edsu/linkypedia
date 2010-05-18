@@ -2,48 +2,31 @@
 
 {% block content %}
 
-<table id="website_summary">
-    <tr class="even">
-        <td>Site:</td>
-        <td>{{ website.name }}</td>
-    </tr>
-    <tr class="odd">
-        <td>URL:</td>
-        <td><a href="{{ website.url }}">{{ website.url }}</a></td>
-    </tr>
-    <tr class="even">
-        <td>Number of Links:</td>
-        <td>{{ website.links.count }}</td>
-    </tr>
-    <tr class="odd">
-        <td>Last Crawl:</td>
-        <td>
-        {% if website.last_checked %}
-        {{ website.last_checked }}
-        </td>
-        {% else %}
-        <img src="/static/spinner.gif" title="waiting for crawl to complete"/>
-        {% endif %}
-        </td> 
-    </tr>
-</table>
+<div id="title">{{ title }}</div>
 
-<table>
-    {% for link in links %}
-    <tr class="{% cycle 'odd' 'even' %}">
-        <td class="link_source">
-            <a href="{{ link.wikipedia_page.url }}">
-                {{ link.wikipedia_page.title }}
-            </a>
-        </td>
-        <td class="link_target">
-            <a href="{{ link.target }}">
-                {{ link.target }}
-            </a>
-        </td>
-        <td>{{ link.wikipedia_page.categories.all|join:", " }}</td>
-    </tr>
-    {% endfor %}
-</table>
+<div id="tab_pane">
+
+<div id="tabs">
+    <span class="{% if tab == "summary" %}active_tab{% else %}inactive_tab{% endif %}">
+        <a href="{% url website_summary website.id %}">summary</a>
+    </span>
+    <span class="{% if tab == "links" %}active_tab{% else %}inactive_tab{% endif %}">
+        <a href="{% url website_links website.id %}">links</a>
+    </span>
+    <span class="{% if tab == "categories" %}active_tab{% else %}inactive_tab{% endif %}">
+        <a href="{% url website_categories website.id %}">categories</a>
+    </span>
+</div>
+
+<div id="tab_summary">
+    {{ tab_summary }}
+</div>
+
+<div id="tab_content">
+{% block tab_content %}
+{% endblock %}
+</div>
+
+</div>
 
 {% endblock %}

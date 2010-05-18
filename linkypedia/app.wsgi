@@ -1,6 +1,8 @@
 import os, sys
 
-home = os.path.abspath(os.curdir)
+from os.path import dirname, abspath
+
+home = dirname(dirname(abspath(__file__)))
 
 sys.path.append(home)
 os.environ['DJANGO_SETTINGS_MODULE'] = 'linkypedia.settings'

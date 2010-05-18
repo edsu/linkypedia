@@ -2,10 +2,17 @@
 
 {% block content %}
 
+<div id="slogan">
+    linkypedia helps you <strong>explore</strong> how your web property is 
+    used on wikipedia, <strong>extract</strong> crowd-sourced information 
+    about your web resources, and <strong>connect</strong> with wikipedians 
+    who are using your stuff.
+</div>
+
 <div id="add_site">
 <form action="" method="post">
     <input type="text" name="new_website_url">
-    <input type="submit" name="website" value="add a site">
+    <input type="submit" name="website" value="add a website url" title="go ahead, really!">
     {% csrf_token %}
 </form>
 </div>
@@ -15,12 +22,16 @@
         {% for website in websites %}
         <tr>
         <td>
-            <a href="{% url website website.id %}">
+            <a href="{% url website_summary website.id %}" title="{{ website.url }}">
             {% if website.favicon_url %}
             <img src="{{ website.favicon_url }}" class="favicon" title="{{ website.name }}"/>
             {% endif %}
             {{ website.name }}
+            {% if website.last_checked %}
             ({{ website.links.count }})
+            {% else %}
+            <img class="spinner" title="waiting for crawl to complete" style="border: none;" src="/static/spinner.gif" />
+            {% endif %}
             </a>
         </td>
         </tr>

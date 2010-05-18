@@ -3,20 +3,19 @@ import logging
 import datetime
 import urlparse
 
-import rdflib
 from django.db import models as m
+from django.db.models import Count
 
-from linkypedia import links
 from linkypedia import wikipedia
 
 class WikipediaCategory(m.Model):
-    title = m.TextField(primary_key=True)
+    title = m.CharField(primary_key=True, max_length=255)
 
     def __unicode__(self):
         return self.title
 
 class WikipediaPage(m.Model):
-    url = m.TextField(primary_key=True)
+    url = m.CharField(max_length=500)
     title = m.TextField()
     created = m.DateTimeField(null=True)
     categories = m.ManyToManyField(WikipediaCategory, related_name='pages')
@@ -54,6 +53,12 @@ class Website(m.Model):
         if self.crawls.filter(finished__isnull=False).count() > 0:
             return self.crawls.all()[0].finished
         return None
+
+    def categories(self):
+        return WikipediaCategory.objects.filter(pages__links__website=self).distinct().annotate(Count('pages'))
+
+    def wikipedia_pages(self):
+        return WikipediaPage.objects.filter(links__website=self).distinct()
 
 class Crawl(m.Model):
     started = m.DateTimeField(null=True)
