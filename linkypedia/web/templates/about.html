@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="width: 50%; float: left">
+
+<h2>About Linkypedia</h2>
+<p>
+The idea behind linkypedia is to help 
+organizations that are putting content online to see how wikipedians are 
+citing and annotating their stuff. Many libraries, museums and archives 
+have embraced the new publishing medium of the Web by digitizing items and
+putting them on the Web. Traditionally these items have been organized 
+and annotated by catalogers, archivists and curators around the world.
+</p>
+
+<p>
+linkypedia aims to help reveal the connections
+between these digital curation communities. To let cultural institutions get
+a handle on the rich metadata and contextual information found in
+wikipedia...and to help wikipedians find more the rich seams of historic  
+</p>
+
+<p>
+If you are interested in how it all works linkypedia is a <a
+    href="http://djangoproject.org">Python/Django</a>
+application that uses the <a
+    href="http://en.wikipedia.org/w/index.php?title=Special:LinkSearch">External
+    Links Search</a> built into Wikipedia to get a list of wikipedia pages and
+the relevant links. The project also uses the lovely <a
+    href="http://en.wikipedia.org/w/api.php">Wikipedia API</a> to fetch relevant
+details about the wikipedia page. The source code is available on <a
+    href="http://github.com/edsu/linkypedia">GitHub</a>.
+</p>
+
+</div>
+
+<div style="text-align: center; padding-top: 50px;">
+    <object width="400" height="225"><param name="allowfullscreen" value="true" /><param name="allowscriptaccess" value="always" /><param name="movie" value="http://vimeo.com/moogaloop.swf?clip_id=10902371&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=&amp;fullscreen=1" /><embed src="http://vimeo.com/moogaloop.swf?clip_id=10902371&amp;server=vimeo.com&amp;show_title=1&amp;show_byline=1&amp;show_portrait=0&amp;color=&amp;fullscreen=1" type="application/x-shockwave-flash" allowfullscreen="true" allowscriptaccess="always" width="400" height="225"></embed></object>
+</div>
+
+{% endblock %}

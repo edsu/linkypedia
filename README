@@ -1,0 +1,19 @@
+About:
+
+linkypedia is a webapp for seeing how your website content is being used on 
+wikipedia.
+
+Dependencies:
+
+- Django v1.2
+- lxml
+
+Setup:
+
+- cd linkypedia
+- cp settings.py.tmpdfs settings.py
+- add database credentials to linkypedia/settings.py
+- python manage.py syncb
+- python manage.py runserver
+- python manage.py crawl
+
