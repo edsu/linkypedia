@@ -3,6 +3,7 @@ from django.views.static import serve
 
 urlpatterns = patterns(
     'linkypedia.web.views',
+
     url(r'^$', 'websites', name='websites'),
 
     url(r'^websites/(?P<website_id>\d+)/$', 'website_summary',
@@ -19,6 +20,8 @@ urlpatterns = patterns(
 
     url(r'^website/(?P<website_id>.+)/categories/(?P<page_num>\d+)/$',
         'website_categories', name='website_categories_page'),
+
+    url(r'^about/$', 'about', name='about'),
 
     url(r'^static/(?P<path>.*)$', serve, {'document_root': 'static'}),
 )

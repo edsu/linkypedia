@@ -1,5 +1,6 @@
 import urllib2
 import urlparse
+import cStringIO
 
 from lxml import etree
 
@@ -11,6 +12,10 @@ from django.shortcuts import render_to_response, get_object_or_404
 
 from linkypedia.web import models as m
 from linkypedia.paginator import DiggPaginator
+from linkypedia.wikipedia import _fetch
+
+def about(request):
+    return render_to_response('about.html')
 
 def websites(request):
     # create the website instance if one was submitted and
@@ -20,7 +25,9 @@ def websites(request):
         website = _setup_new_website(new_website_url)
         return HttpResponseRedirect('/')
     
-    websites = m.Website.objects.all().order_by('name')
+    websites = m.Website.objects.all()
+    websites = websites.annotate(Count('links'))
+    websites = websites.order_by('-links__count')
     return render_to_response('websites.html', dictionary=locals(),
             context_instance=RequestContext(request))
 
@@ -65,10 +72,14 @@ def _setup_new_website(url):
     if websites.count() > 0:
         return websites[0]
 
+    website = None
     try:
+        if not url.startswith('http://'):
+            url = "http://" + url
         host = urlparse.urlparse(url).netloc
         parser = etree.HTMLParser()
-        doc = etree.parse(urllib2.urlopen(url), parser)
+        html = cStringIO.StringIO(_fetch(url))
+        doc = etree.parse(html, parser)
         title = doc.xpath('/html/head/title')
         if len(title) > 0:
             name = title[0].text

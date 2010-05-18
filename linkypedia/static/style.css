@@ -22,6 +22,7 @@ body {
     font-style: italic;
     text-align: center;
     background-color: #eeeeee;
+    clear: both;
 }
 
 #logo {
@@ -183,4 +184,8 @@ img.favicon {
 .current_page {
     background-color: lightblue;
     color: black;
+}
+
+#about a {
+    text-decoration: underline;
 }
