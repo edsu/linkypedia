@@ -14,6 +14,6 @@ Setup:
 - cp settings.py.tmpdfs settings.py
 - add database credentials to linkypedia/settings.py
 - python manage.py syncb
-- python manage.py runserver
+- python manage.py runserver # or use mod_wsgi with app.wsgi
 - python manage.py crawl
 
