@@ -1,0 +1,28 @@
+{% load custom_filters %}<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://{{ request.META.HTTP_HOST }}/">
+
+    <title>linkypedia websites</title>
+    <link rel="self" type="application/atom+xml" href="{% url websites_feed "feed"%}" />
+    <link rel="alternate" type="text/html" href="{% url websites %}" />
+    <id>info:linkypedia/websites</id>
+    <author>
+        <name>Ed Summers</name>
+        <uri>http://inkdroid.org/ehs</uri>
+    </author>
+    <updated>{{ now|rfc3339 }}</updated>
+    <summary>This feed lists recently crawled websites on linkypedia. You should be able to use this feed to stay on top of what sites are being addeded and crawled at linkypedia.</summary>
+
+    {% for website in websites %}
+    {% if website.last_checked %}
+    <entry>
+        <title>{{website.name}}</title>
+        <link rel="alternate" type="text/html" href="{% url website_summary website.id %}" />
+        <id>info:linkypedia/websites/{{ website.id }}/{{ website.last_crawl.id }}</id>
+        <updated>{{ website.last_checked|rfc3339 }}</updated>
+        <summary>The website "{{ website.name }}" at {{ website.url }} was added to linkypedia. The last crawl finished at {{ website.last_checked }} and found {{ website.links__count }} links from Wikipedia.</summary>
+    </entry>
+    {% endif %}
+    {% endfor %}
+
+</feed>
+

@@ -1,4 +1,5 @@
 import urllib2
+import datetime
 import urlparse
 import cStringIO
 
@@ -17,19 +18,35 @@ from linkypedia.wikipedia import _fetch
 def about(request):
     return render_to_response('about.html')
 
-def websites(request):
+def websites(request, format='html'):
     # create the website instance if one was submitted and
     # redirect to the new website view
     new_website_url = request.POST.get('new_website_url', None)
     if new_website_url:
         website = _setup_new_website(new_website_url)
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(website.get_absolute_url())
     
     websites = m.Website.objects.all()
     websites = websites.annotate(Count('links'))
     websites = websites.order_by('-links__count')
-    return render_to_response('websites.html', dictionary=locals(),
-            context_instance=RequestContext(request))
+
+    if format == 'feed':
+        template = 'websites.atom'
+        mimetype = 'applicaton/atom+xml; charset=utf-8'
+        # figure out the last time the feed changed based on the
+        # most recently crawled site
+        now = datetime.datetime.now()
+        for website in websites:
+            if website.last_checked():
+                now = website.last_checked()
+                break
+    else:
+        template = 'websites.html'
+        mimetype = 'text/html; charset=utf-8'
+
+    return render_to_response(template, dictionary=locals(),
+            context_instance=RequestContext(request),
+            mimetype=mimetype)
 
 def website_summary(request, website_id):
     website = get_object_or_404(m.Website, id=website_id)

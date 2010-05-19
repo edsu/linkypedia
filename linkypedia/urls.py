@@ -5,6 +5,7 @@ urlpatterns = patterns(
     'linkypedia.web.views',
 
     url(r'^$', 'websites', name='websites'),
+    url(r'(?P<format>feed)/$', 'websites', name='websites_feed'),
 
     url(r'^websites/(?P<website_id>\d+)/$', 'website_summary',
         name='website_summary'),

@@ -48,11 +48,18 @@ class Website(m.Model):
 
     @m.permalink
     def get_absolute_url(self):
-        return ('website', (), {'website_id': str(self.id)})
+        return ('website_summary', (), {'website_id': str(self.id)})
 
     def last_checked(self):
+        last_crawl = self.last_crawl()
+        if last_crawl:
+            return last_crawl.finished
+        else:
+            return None
+
+    def last_crawl(self):
         if self.crawls.filter(finished__isnull=False).count() > 0:
-            return self.crawls.all()[0].finished
+            return self.crawls.all()[0]
         return None
 
     def categories(self):
