@@ -1,4 +1,5 @@
 {% extends "website.html" %}
+{% load humanize %}
 
 {% block pages %}
     {% if paginator.num_pages > 1 %} 
@@ -42,7 +43,7 @@
             </a>
         </td>
         <td style="text-align: right;">
-            {{ category.pages__count }}
+            {{ category.pages__count|intcomma }}
         </td>
     </tr>
     {% endfor %}

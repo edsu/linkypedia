@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block extra_links %}
         <link rel="alternate" href="{% url websites_feed "feed"%}" type="application/atom+xml"
@@ -35,7 +36,7 @@ title="Atom Feed for Linkypedia Website Crawl Activity" />
             {% endif %}
             {{ website.name }}
             {% if website.last_checked %}
-            ({{ website.links.count }})
+            ({{ website.links.count|intcomma }})
             {% else %}
             <img class="spinner" title="waiting for crawl to complete" style="border: none;" src="/static/spinner.gif" />
             {% endif %}
