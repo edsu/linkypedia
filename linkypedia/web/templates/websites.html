@@ -1,12 +1,19 @@
 {% extends "base.html" %}
 
+{% block extra_links %}
+        <link rel="alternate" href="{% url websites_feed "feed"%}" type="application/atom+xml"
+title="Atom Feed for Linkypedia Website Crawl Activity" />
+{% endblock %}
+
 {% block content %}
 
 <div id="slogan">
-    <a href="/about" style="text-decoration: underline">linkypedia</a> helps you <strong>explore</strong> how your web content is 
-    used on wikipedia, <strong>extract</strong> crowd-sourced information 
-    about your web resources, and <strong>connect</strong> with wikipedians 
-    who are using your stuff.
+    <a href="/about" style="text-decoration: underline">linkypedia</a> helps you
+    <strong>explore</strong> how your web content is used on wikipedia,
+    <strong>extract</strong> crowd-sourced information about your web resources,
+    and <strong>connect</strong> with wikipedians who are using your stuff. <a
+        href="{% url websites_feed "feed" %}"><img style="border: none; height:
+        17px; vertical-align: middle;" src="/static/feed.png" /></a>
 </div>
 
 <div id="add_site">
