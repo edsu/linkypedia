@@ -5,6 +5,7 @@ from django.db import reset_queries
 
 from linkypedia.web import models as m
 from linkypedia import wikipedia
+from linkypedia.settings import CRAWL_CUTOFF
 
 def crawl(website):
     """
@@ -17,6 +18,7 @@ def crawl(website):
     crawl.save()
 
     # look at all wikipedia pages that reference a particular website
+    count = 0
     for source, target in wikipedia.links(website.url):
 
         # get the wikipedia page
@@ -39,6 +41,11 @@ def crawl(website):
         link.last_checked = datetime.datetime.now()
         link.save()
         reset_queries()
+        count += 1
+
+        if CRAWL_CUTOFF and count > CRAWL_CUTOFF:
+            logging.info("stopping at 20k")
+            break
 
     crawl.finished = datetime.datetime.now()
     crawl.save()

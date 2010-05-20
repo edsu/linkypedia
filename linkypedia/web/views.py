@@ -14,6 +14,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from linkypedia.web import models as m
 from linkypedia.paginator import DiggPaginator
 from linkypedia.wikipedia import _fetch
+from linkypedia.settings import CRAWL_CUTOFF
 
 def about(request):
     return render_to_response('about.html')
@@ -53,6 +54,8 @@ def website_summary(request, website_id):
     tab = 'summary'
     tab_summary = "Summary Information for %s" % website.name
     title = "website: %s" % website.url
+    if website.links.count() == CRAWL_CUTOFF:
+        cutoff = CRAWL_CUTOFF
     return render_to_response('website_summary.html', dictionary=locals())
 
 def website_pages(request, website_id, page_num=1):

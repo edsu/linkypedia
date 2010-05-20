@@ -35,6 +35,12 @@
         {% endif %}
         </td> 
     </tr>
+    {% if cutoff %}
+    <tr class="odd">
+        <td style="color: red;">Crawl Cutoff:</td>
+        <td style="color: red;">{{ cutoff }}</td>
+    </tr>
+    {% endif %}
 </table>
 
 {% endblock %}
