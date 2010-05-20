@@ -44,7 +44,7 @@ def crawl(website):
         count += 1
 
         if CRAWL_CUTOFF and count > CRAWL_CUTOFF:
-            logging.info("stopping at 20k")
+            logging.info("stopping crawl at crawl cutoff: %s" % CRAWL_CUTOFF)
             break
 
     crawl.finished = datetime.datetime.now()
