@@ -15,6 +15,5 @@ Setup:
 - add database credentials to linkypedia/settings.py
 - python manage.py syncb
 - python manage.py runserver # or use mod_wsgi with app.wsgi
-- python manage.py crawl
-
-Optionally you can deploy with mod_wsgi using conf/linkypedia.conf
+- python manage.py crawl # the daemon that crawls 
+- optionally you can deploy with apache/mod_wsgi using conf/linkypedia.conf
