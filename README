@@ -17,3 +17,4 @@ Setup:
 - python manage.py runserver # or use mod_wsgi with app.wsgi
 - python manage.py crawl
 
+Optionally you can deploy with mod_wsgi using conf/linkypedia.conf
