@@ -24,6 +24,7 @@ urlpatterns = patterns(
 
     url(r'^about/$', 'about', name='about'),
 
+    url(r'robots.txt','robots', name='robots'),
     url(r'^static/(?P<path>.*)$', serve, {'document_root': 'static'}),
 )
 

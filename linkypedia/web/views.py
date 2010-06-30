@@ -122,3 +122,6 @@ def _setup_new_website(url):
         pass
 
     return website
+
+def robots(request):
+    return render_to_response('robots.txt', mimetype='text/plain')
