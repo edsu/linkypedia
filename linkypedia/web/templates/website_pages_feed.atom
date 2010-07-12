@@ -1,0 +1,44 @@
+{% load custom_filters %}<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:linkypedia="http://{{ host }}/" xml:base="http://{{ request.META.HTTP_HOST }}/">
+
+    <title>Linkypedia: new Wikipedia pages for {{ website.name }}</title>
+    <link rel="self" type="application/atom+xml" href="{% url website_pages_feed website.id %}" />
+    <link rel="alternate" type="text/html" href="http://{{ host }}{% url website_pages website.id %}" />
+    <id>info:linkypedia/websites/{{ website.id }}/pages</id>
+    <author>
+        <name>Ed Summers</name>
+        <uri>http://inkdroid.org/ehs</uri>
+    </author>
+    <updated>{{ feed_updated|rfc3339 }}</updated>
+    <subtitle>This feed lists recent pages on wikipedia that referenced the website {{ website.title }}</subtitle>
+
+    {% if page.has_previous %}
+    <link rel="previous" type="application/atom+xml" href="http://{{ host }}{% url website_pages_feed_page website.id page.previous_page_number %}" />
+    {% endif %}
+
+    {% if page.has_next %}
+    <link rel="next" type="application/atom+xml" href="http://{{ host }}{% url website_pages_feed_page website.id, page.next_page_number %}" />
+    {% endif %}
+
+    {% for wpage in wikipedia_pages %}
+    <entry>
+        <title>{{ wpage.title }}</title>
+        <link rel="alternate" type="text/html" href="{{ wpage.url }}" />
+        <id>info:linkypedia/websites/{{ website.id }}/pages/{{ wpage.id }}</id>
+        <updated>{{ wpage.last_modified|rfc3339 }}</updated>
+        <summary type="xhtml">
+            <div xmlns="http://www.w3.org/1999/xhtml">
+                Linkypedia just noticed at {{ wpage.last_modified }} GMT
+                that the wikipedia page 
+                <a href="{{ wpage.url }}">{{ wpage.title }}</a> is now
+                referencing the website
+                <a href="{{ website.url }}">{{ website.name }}</a>. 
+                More information about this website can be found at 
+                <a href="http://{{ host }}/{% url website_summary website.id %}">linkypedia</a>.
+            </div>
+        </summary>
+        <linkypedia:links>{{ wpage.links__count }}</linkypedia:links>
+    </entry>
+    {% endfor %}
+
+</feed>
