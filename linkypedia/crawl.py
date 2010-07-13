@@ -22,10 +22,9 @@ def crawl(website):
     for source, target in wikipedia.links(website.url):
 
         # get the wikipedia page
-        page, created = m.WikipediaPage.objects.get_or_create(url=source)
+        page, created = m.WikipediaPage.new_from_wikipedia(url=source)
         if created: 
             logging.info("created wikipedia page for %s" % source)
-            page.populate_from_wikipedia()
 
         # create the link
         link, created = m.Link.objects.get_or_create(
@@ -35,8 +34,6 @@ def crawl(website):
 
         if created:
             logging.info("created link: %s -> %s" % (source, target))
-        else:
-            logging.info("updated link: %s -> %s" % (source, target))
 
         link.last_checked = datetime.datetime.now()
         link.save()

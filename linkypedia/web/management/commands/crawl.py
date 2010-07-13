@@ -1,5 +1,6 @@
 import time
 import logging
+import datetime
 import urlparse
 
 from django.core.management.base import BaseCommand
@@ -17,9 +18,12 @@ class Command(BaseCommand):
     def handle(self, **options):
         logging.info("starting crawl daemon")
         while True:
-            # look for new websites to crawl
-            new_websites = m.Website.objects.filter(crawls=None)
-            for website in new_websites:
+            recently = datetime.datetime.now() - datetime.timedelta(hours=4)
+            websites = m.Website.objects.all()
+            for website in websites:
+                if website.last_crawl() \
+                    and website.last_crawl().finished > recently:
+                    continue
                 logging.info("found new website to crawl: %s" % website.name)
                 crawl(website)
             time.sleep(10)

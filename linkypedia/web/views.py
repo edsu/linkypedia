@@ -1,3 +1,4 @@
+import json
 import urllib2
 import datetime
 import urlparse
@@ -12,6 +13,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
 from linkypedia.web import models as m
+from linkypedia.rfc3339 import rfc3339
 from linkypedia.paginator import DiggPaginator
 from linkypedia.wikipedia import _fetch
 from linkypedia.settings import CRAWL_CUTOFF
@@ -60,7 +62,6 @@ def website_summary(request, website_id):
 
 def website_pages(request, website_id, page_num=1):
     website = m.Website.objects.get(id=website_id)
-
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
     wikipedia_pages = wikipedia_pages.annotate(Count('links'))
     wikipedia_pages = wikipedia_pages.order_by('-links__count')
@@ -75,6 +76,34 @@ def website_pages(request, website_id, page_num=1):
     title = "website: %s" % website.url
 
     return render_to_response('website_pages.html', dictionary=locals())
+
+def website_page_links(request, website_id, page_id):
+    website = m.Website.objects.get(id=website_id)
+    wikipedia_page = m.WikipediaPage.objects.get(id=page_id)
+    links = m.Link.objects.filter(wikipedia_page=wikipedia_page,
+            website=website)
+
+    return render_to_response('website_page_links.html', dictionary=locals())
+
+
+def website_pages_feed(request, website_id, page_num=1):
+    website = m.Website.objects.get(id=website_id)
+    wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
+    wikipedia_pages = wikipedia_pages.annotate(Count('links'))
+    wikipedia_pages = wikipedia_pages.order_by('-last_modified')
+    wikipedia_pages = wikipedia_pages.distinct()
+
+    feed_updated = datetime.datetime.now()
+    if wikipedia_pages.count() > 0:
+        feed_updated = wikipedia_pages[0].last_modified
+
+    host = request.get_host()
+    paginator = Paginator(wikipedia_pages, 100)
+    page = paginator.page(int(page_num))
+    wikipedia_pages = page.object_list
+    
+    return render_to_response('website_pages_feed.atom', 
+            mimetype="application/atom+xml", dictionary=locals())
 
 def website_categories(request, website_id, page_num=1):
     website = get_object_or_404(m.Website, id=website_id)
@@ -103,6 +132,8 @@ def _setup_new_website(url):
         title = doc.xpath('/html/head/title')
         if len(title) > 0:
             name = title[0].text
+            if ' - ' in name:
+                name = name.split(' - ')[0]
         else:
             name = host
         website = m.Website.objects.create(url=url, name=name)
@@ -122,6 +153,19 @@ def _setup_new_website(url):
         pass
 
     return website
+
+def lookup(request):
+    url = request.REQUEST.get('url', None)
+    results = []
+    for link in m.Link.objects.filter(target=url):
+        w = link.wikipedia_page
+        result = {
+            'url': w.url, 
+            'title': w.title, 
+            'last_modified': rfc3339(w.last_modified)
+            }
+        results.append(result)
+    return HttpResponse(json.dumps(results, indent=2), mimetype='application/json')
 
 def robots(request):
     return render_to_response('robots.txt', mimetype='text/plain')

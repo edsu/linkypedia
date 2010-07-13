@@ -106,6 +106,9 @@ def rfc3339(date, utc=False, use_system_timezone=True):
         raise TypeError('excepted %s, got %s instead' %
                         (datetime.datetime.__name__, date.__class__.__name__))
 
+def rfc3339_parse(s):
+    return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ")
+
 if __name__ == '__main__':
     import doctest
     doctest.testmod()

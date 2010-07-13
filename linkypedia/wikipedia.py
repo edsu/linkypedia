@@ -12,9 +12,10 @@ import urllib2
 import BeautifulSoup
 
 def url_to_title(url):
+    url = str(url)
     match = re.match(r'http://.+/wiki/(.+)$', url)
     if match:
-        return match.group(1)
+        return urllib.unquote(match.group(1)).decode('utf-8')
     else:
         return None
 
@@ -22,7 +23,7 @@ def info(title):
     logging.info("looking up info for %s at wikipedia" % title)
     q = {'action': 'query', 
          'prop': 'info', 
-         'titles': title,
+         'titles': title.encode('utf-8'),
          }
     return _api(q)
 
@@ -30,7 +31,7 @@ def categories(title):
     logging.info("looking up categories for %s" % title)
     q = {'action': 'query',
          'prop': 'categories',
-         'titles': title,
+         'titles': title.encode('utf-8'),
          }
     try:
         return _api(q)['categories']
@@ -66,12 +67,16 @@ def links(site, lang='en', page_size=500, offset=0):
 def _api(params):
     params['format'] = 'json'
     url = 'http://en.wikipedia.org/w/api.php'
-    response = _fetch(url + '?' + urllib.urlencode(params))
+    response = _fetch(url, params)
     data = json.loads(response)
     first_page_key = data['query']['pages'].keys()[0]
     return data['query']['pages'][first_page_key]
 
-def _fetch(url):
-    req = urllib2.Request(url)
+def _fetch(url, params=None):
+    if params:
+        req = urllib2.Request(url, data=urllib.urlencode(params))
+        req.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
+    else:
+        req = urllib2.Request(url)
     req.add_header('User-agent', 'linkpyediabot v0.1: http://github.com/edsu/linkypedia')
     return urllib2.urlopen(req).read()

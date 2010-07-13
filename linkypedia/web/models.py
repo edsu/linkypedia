@@ -7,6 +7,7 @@ from django.db import models as m
 from django.db.models import Count
 
 from linkypedia import wikipedia
+from linkypedia.rfc3339 import rfc3339_parse
 
 class WikipediaCategory(m.Model):
     title = m.CharField(primary_key=True, max_length=255)
@@ -15,24 +16,32 @@ class WikipediaCategory(m.Model):
         return self.title
 
 class WikipediaPage(m.Model):
-    url = m.CharField(max_length=500)
+    url = m.CharField(null=False, max_length=500)
+    last_modified = m.DateTimeField(null=False)
     title = m.TextField()
-    created = m.DateTimeField(null=True)
     categories = m.ManyToManyField(WikipediaCategory, related_name='pages')
 
-    def populate_from_wikipedia(self, force=False):
-        if not force and self.title:
-            return
-        title_escaped = wikipedia.url_to_title(self.url)
+    @classmethod
+    def new_from_wikipedia(klass, url):
+        # if we have a page for a given url already we can return it
+        wikipedia_pages = WikipediaPage.objects.filter(url=url)
+        if wikipedia_pages.count() > 0:
+            return wikipedia_pages[0], False
+
+        title_escaped = wikipedia.url_to_title(url)
         info = wikipedia.info(title_escaped)
-        self.title = info['title']
-        for cat in wikipedia.categories(self.title):
+
+        wikipedia_page = WikipediaPage.objects.create(title=info['title'],
+            url=url, last_modified=rfc3339_parse(info['touched']))
+
+        for cat in wikipedia.categories(wikipedia_page.title):
             title = cat['title'].lstrip('Category:')
+            if not title:
+                continue
             category, created = WikipediaCategory.objects.get_or_create(title=title)
-            logging.info("adding category %s to wikipedia page %s" %
-                    (category.title, self.title))
-            self.categories.add(category)
-        self.save()
+            wikipedia_page.categories.add(category)
+        wikipedia_page.save()
+        return wikipedia_page, True
 
 class Link(m.Model):
     created = m.DateTimeField(auto_now=True)

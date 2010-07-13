@@ -45,6 +45,10 @@ body {
     background-color: #eeeeee;
 }
 
+#slogan a {
+    text-decoration: underline;
+}
+
 #content {
     width: 90%;
     margin-left: auto;
@@ -71,14 +75,28 @@ td {
 
 td.wikipedia_page {
     word-break: break-all;
+    text-align: left;
 }
 
 td.link_count {
     text-align: right;
 }
 
+td.link_count a {
+    text-decoration: underline;
+}
+
+td.last_updated {
+    text-align: left;
+    width: 20%;
+}
+
 td.favicon {
     text-align: center;
+}
+
+td.website_url {
+    text-align: left;
 }
 
 a {
@@ -103,8 +121,8 @@ a {
 }
 
 #website_details {
-    font-size: 10pt;
-    width: 60%;
+    font-size: 11pt;
+    width: 90%;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 15px;
@@ -157,6 +175,10 @@ img.favicon {
     padding: 10px;
 }
 
+#tab_summary a {
+    text-decoration: underline;
+}
+
 #tab_content {
     padding-top: 15px;
     border: thick solid #eeeeee;
@@ -189,4 +211,10 @@ img.favicon {
 
 #about a {
     text-decoration: underline;
+}
+
+img.feed_icon {
+    border: none; 
+    height: 17px; 
+    vertical-align: middle;
 }

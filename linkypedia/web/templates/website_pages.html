@@ -1,6 +1,8 @@
 {% extends "website.html" %}
 {% load humanize %}
 
+{% block extra_links %}<link rel="alternate" type="application/atom+xml" title="wikipedia page feed" href="{% url website_pages_feed website.id %}" />{% endblock %}
+
 {% block pages %}
     {% if paginator.num_pages > 1 %}
     <br />
@@ -25,6 +27,14 @@
     {% endfor %}
     {% endif %}
     {% endif %}
+    {% endblock %}
+
+{% block tab_summary %}
+Wikipedia pages for <a href="{{ website.url }}">{{ website.name }}</a>. <br />
+Put this <a href="{% url website_pages_feed website.id %}">feed</a> in your 
+favorite feed reader and get notified of new pages that reference this 
+website. <a href="{% url website_pages_feed website.id %}">
+<img class="feed_icon" src="/static/feed.png" /></a>
 {% endblock %}
 
 {% block tab_content %}
@@ -33,6 +43,7 @@
     <tr>
         <th>Wikipedia Page</th>
         <th>Links</th>
+        <th>Last Update<br />at Wikipedia</th>
     </tr>
     {% for wikipedia_page in wikipedia_pages %}
     <tr class="{% cycle 'odd' 'even' %}">
@@ -42,7 +53,12 @@
             </a>
         </td>
         <td class="link_count">
-            {{ wikipedia_page.links__count|intcomma }}
+            <a href="{% url website_page_links website.id, wikipedia_page.id %}">
+                {{ wikipedia_page.links__count|intcomma }}
+            </a>
+        </td>
+        <td class="last_updated">
+            {{ wikipedia_page.last_modified|date:"Y-m-d h:m:s" }}
         </td>
     </tr>
     {% endfor %}

@@ -1,6 +1,7 @@
 {% extends "website.html" %}
 {% load humanize %}
 
+
 {% block pages %}
     {% if paginator.num_pages > 1 %} 
     <br />
@@ -28,11 +29,15 @@
 
 {% endblock %}
 
+{% block tab_summary %}
+Wikipedia categories for <a href="{{ website.url }}">{{ website.name }}</a>.
+{% endblock %}
+
 {% block tab_content %}
 
 <table id="website_details">
     <tr>
-        <th>WikipediaCategories</th>
+        <th>Wikipedia Categories</th>
         <th>Wikipedia<br />Pages</th>
     </tr>
     {% for category in categories %}
