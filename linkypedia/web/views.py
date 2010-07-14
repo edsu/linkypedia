@@ -32,6 +32,7 @@ def websites(request, format='html'):
     websites = m.Website.objects.all()
     websites = websites.annotate(Count('links'))
     websites = websites.order_by('-links__count')
+    host = request.get_host()
 
     if format == 'feed':
         template = 'websites.atom'
