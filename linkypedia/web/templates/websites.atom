@@ -1,5 +1,5 @@
 {% load custom_filters %}<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom" xml:base="http://{{ host }}/">
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:linkypedia="http://{{ host }}" xml:base="http://{{ host }}/">
 
     <title>linkypedia websites</title>
     <link rel="self" type="application/atom+xml" href="{% url websites_feed %}" />
@@ -20,6 +20,7 @@
         <id>info:linkypedia/websites/{{ website.id }}</id>
         <updated>{{ website.created|rfc3339 }}</updated>
         <summary>The website "{{ website.name }}" at {{ website.url }} was added to linkypedia at {{ website.created }}</summary>
+        <linkypedia:links>{{ website.links.count }}</linkypedia:links>
     </entry>
     {% endif %}
     {% endfor %}
