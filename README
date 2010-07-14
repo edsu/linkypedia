@@ -11,9 +11,9 @@ Dependencies:
 Setup:
 
 - cd linkypedia
-- cp settings.py.tmpdfs settings.py
+- cp settings.py.tmpl settings.py
 - add database credentials to linkypedia/settings.py
-- python manage.py syncb
+- python manage.py syncdb
 - python manage.py runserver # or use mod_wsgi with app.wsgi
 - python manage.py crawl # the daemon that crawls 
 - optionally you can deploy with apache/mod_wsgi using conf/linkypedia.conf
