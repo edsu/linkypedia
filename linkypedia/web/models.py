@@ -35,7 +35,7 @@ class WikipediaPage(m.Model):
             url=url, last_modified=rfc3339_parse(info['touched']))
 
         for cat in wikipedia.categories(wikipedia_page.title):
-            title = cat['title'].lstrip('Category:')
+            title = cat['title'][9:]
             if not title:
                 continue
             category, created = WikipediaCategory.objects.get_or_create(title=title)
