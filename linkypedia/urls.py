@@ -5,16 +5,13 @@ urlpatterns = patterns(
     'linkypedia.web.views',
 
     url(r'^$', 'websites', name='websites'),
-    url(r'^(?P<format>feed)/$', 'websites', name='websites_feed'),
+    url(r'^feed/$', 'websites_feed', name='websites_feed'),
 
     url(r'^websites/(?P<website_id>\d+)/$', 'website_summary',
         name='website_summary'),
 
     url(r'^websites/(?P<website_id>\d+)/pages/$', 'website_pages',
         name='website_pages'),
-
-    url(r'^websites/(?P<website_id>\d+)/pages/(?P<page_num>\d+)/$', 
-        'website_pages', name='website_pages_page'),
 
     url(r'^websites/(?P<website_id>\d+)/links/(?P<page_id>\d+)/$',
         'website_page_links', name='website_page_links'),

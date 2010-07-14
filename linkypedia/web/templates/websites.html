@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block extra_links %}
-        <link rel="alternate" href="{% url websites_feed "feed"%}" type="application/atom+xml"
+        <link rel="alternate" href="{% url websites_feed %}" type="application/atom+xml"
 title="Atom Feed for Linkypedia Website Crawl Activity" />
 {% endblock %}
 
@@ -19,7 +19,7 @@ title="Atom Feed for Linkypedia Website Crawl Activity" />
     But please feel free to 
     <a href="http://github.com/edsu/linkypedia">download</a>
     the code and run it in your own environment if you want.
-    <a href="{% url websites_feed "feed" %}"><img class="feed_icon" src="/static/feed.png" /></a>
+    <a href="{% url websites_feed %}"><img class="feed_icon" src="/static/feed.png" /></a>
 </div>
 
 <div id="add_site">

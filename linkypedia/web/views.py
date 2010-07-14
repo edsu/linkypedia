@@ -21,7 +21,7 @@ from linkypedia.settings import CRAWL_CUTOFF
 def about(request):
     return render_to_response('about.html')
 
-def websites(request, format='html'):
+def websites(request):
     # create the website instance if one was submitted and
     # redirect to the new website view
     new_website_url = request.POST.get('new_website_url', None)
@@ -34,23 +34,23 @@ def websites(request, format='html'):
     websites = websites.order_by('-links__count')
     host = request.get_host()
 
-    if format == 'feed':
-        template = 'websites.atom'
-        mimetype = 'applicaton/atom+xml; charset=utf-8'
-        # figure out the last time the feed changed based on the
-        # most recently crawled site
-        now = datetime.datetime.now()
-        for website in websites:
-            if website.last_checked():
-                now = website.last_checked()
-                break
-    else:
-        template = 'websites.html'
-        mimetype = 'text/html; charset=utf-8'
+    return render_to_response('websites.html', dictionary=locals(),
+            context_instance=RequestContext(request))
 
-    return render_to_response(template, dictionary=locals(),
+def websites_feed(request):
+    websites = m.Website.objects.all()
+    websites = websites.order_by('-created')
+    host = request.get_host()
+
+    # figure out the last time the feed changed based on the
+    # most recently crawled site
+    feed_updated = datetime.datetime.now()
+    if websites.count() > 0:
+        feed_updated = websites[0].created
+
+    return render_to_response('websites.atom', dictionary=locals(),
             context_instance=RequestContext(request),
-            mimetype=mimetype)
+            mimetype='application/json; charset=utf-8')
 
 def website_summary(request, website_id):
     website = get_object_or_404(m.Website, id=website_id)
@@ -61,15 +61,33 @@ def website_summary(request, website_id):
         cutoff = CRAWL_CUTOFF
     return render_to_response('website_summary.html', dictionary=locals())
 
-def website_pages(request, website_id, page_num=1):
+def website_pages(request, website_id):
     website = m.Website.objects.get(id=website_id)
+
+    page_num = request.GET.get('page', 1)
+    page_num = int(page_num)
+
+    # make sure we support the order
+    order = request.GET.get('order', 'links')
+    direction = request.GET.get('direction', 'desc')
+    other_direction = 'asc' if direction == 'desc' else 'desc'
+
+    if order == 'update' and direction =='asc':
+        sort_order = 'last_modified'
+    elif order == 'update' and direction == 'desc':
+        sort_order = '-last_modified'
+    elif order == 'links' and direction == 'asc':
+        sort_order = 'links__count'
+    else:
+        sort_order = '-links__count'
+
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
     wikipedia_pages = wikipedia_pages.annotate(Count('links'))
-    wikipedia_pages = wikipedia_pages.order_by('-links__count')
+    wikipedia_pages = wikipedia_pages.order_by(sort_order)
     wikipedia_pages = wikipedia_pages.distinct()
 
     paginator = DiggPaginator(wikipedia_pages, 100)
-    page = paginator.page(int(page_num))
+    page = paginator.page(page_num)
     wikipedia_pages = page.object_list
 
     tab = 'pages'

@@ -9,21 +9,21 @@
     <br />
     {% if page.leading_range %}
     {% for num in page.leading_range %}
-    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_pages_page website_id num %}">{{ num }}</a>
+    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_pages website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
     {% endfor %}
     …
     {% endif %}
 
     {% if page.main_range %}
     {% for num in page.main_range %}
-    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_pages_page website_id num %}">{{ num }}</a>
+    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_pages website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
     {% endfor %}
     {% endif %}
 
     {% if page.trailing_range %}
     …
     {% for num in page.trailing_range %}
-    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_pages_page website_id num %}">{{ num }}</a>
+    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_pages website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
     {% endfor %}
     {% endif %}
     {% endif %}
@@ -42,8 +42,13 @@ website. <a href="{% url website_pages_feed website.id %}">
 <table id="website_details">
     <tr>
         <th>Wikipedia Page</th>
-        <th>Links</th>
-        <th>Last Update<br />at Wikipedia</th>
+        {% if order == 'links' %}
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=links&amp;direction={{ other_direction }}">Links</a></th>
+        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction={{ direction }}">Last Update<br />at Wikipedia</a></th>
+        {% else %}
+        <th><a href="{% url website_pages website.id %}?page=1&amp;order=links&amp;direction={{ direction }}">Links</a></th>
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order={{ order }}&amp;direction={{ other_direction }}">Last Update<br />at Wikipedia</a></th>
+        {% endif %}
     </tr>
     {% for wikipedia_page in wikipedia_pages %}
     <tr class="{% cycle 'odd' 'even' %}">

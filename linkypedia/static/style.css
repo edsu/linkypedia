@@ -88,7 +88,7 @@ td.link_count a {
 
 td.last_updated {
     text-align: left;
-    width: 20%;
+    width: 22%;
 }
 
 td.favicon {
@@ -217,4 +217,8 @@ img.feed_icon {
     border: none; 
     height: 17px; 
     vertical-align: middle;
+}
+
+th a {
+    text-decoration: underline;
 }

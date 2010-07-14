@@ -44,7 +44,7 @@ class WikipediaPage(m.Model):
         return wikipedia_page, True
 
 class Link(m.Model):
-    created = m.DateTimeField(auto_now=True)
+    created = m.DateTimeField(auto_now_add=True)
     wikipedia_page = m.ForeignKey('WikipediaPage', related_name='links')
     target = m.TextField()
     website = m.ForeignKey('Website', related_name='links')
@@ -53,7 +53,7 @@ class Website(m.Model):
     url = m.TextField()
     name = m.TextField()
     favicon_url = m.TextField()
-    created = m.DateTimeField(auto_now=True)
+    created = m.DateTimeField(auto_now_add=True)
 
     @m.permalink
     def get_absolute_url(self):
