@@ -10,7 +10,7 @@
         <uri>http://inkdroid.org/ehs</uri>
     </author>
     <updated>{{ feed_updated|rfc3339 }}</updated>
-    <subtitle>This feed lists recent pages on wikipedia that referenced the website {{ website.title }}</subtitle>
+    <subtitle>This feed lists recent pages on wikipedia that referenced the website {{ website.name }}</subtitle>
 
     {% if page.has_previous %}
     <link rel="previous" type="application/atom+xml" href="http://{{ host }}{% url website_pages_feed_page website.id page.previous_page_number %}" />

@@ -3,7 +3,7 @@
 
 {% block extra_links %}<link rel="alternate" type="application/atom+xml" title="wikipedia page feed" href="{% url website_pages_feed website.id %}" />{% endblock %}
 
-{% block pages %}
+<div id="page_links">
     {% if paginator.num_pages > 1 %}
     <br />
     <br />
@@ -27,7 +27,7 @@
     {% endfor %}
     {% endif %}
     {% endif %}
-    {% endblock %}
+{% endblock %}
 
 {% block tab_summary %}
 Wikipedia pages for <a href="{{ website.url }}">{{ website.name }}</a>. <br />

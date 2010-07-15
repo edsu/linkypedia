@@ -12,6 +12,10 @@ body {
     text-align: center;
 }
 
+#header a {
+    text-decoration: none;
+}
+
 #footer {
     margin-top: 20px;
     width: 60%;
@@ -82,10 +86,6 @@ td.link_count {
     text-align: right;
 }
 
-td.link_count a {
-    text-decoration: underline;
-}
-
 td.last_updated {
     text-align: left;
     width: 22%;
@@ -100,7 +100,7 @@ td.website_url {
 }
 
 a {
-    text-decoration: none;
+    text-decoration: underline;
     color: black;
 }
 
@@ -108,6 +108,10 @@ a {
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+}
+
+#websites a {
+    text-decoration: none;
 }
 
 #website_summary {
@@ -175,10 +179,6 @@ img.favicon {
     padding: 10px;
 }
 
-#tab_summary a {
-    text-decoration: underline;
-}
-
 #tab_content {
     padding-top: 15px;
     border: thick solid #eeeeee;
@@ -204,21 +204,17 @@ img.favicon {
     font-size: 11pt;
 }
 
+.page_link a {
+    text-decoration: none;
+}
+
 .current_page {
     background-color: lightblue;
     color: black;
-}
-
-#about a {
-    text-decoration: underline;
 }
 
 img.feed_icon {
     border: none; 
     height: 17px; 
     vertical-align: middle;
-}
-
-th a {
-    text-decoration: underline;
 }
