@@ -24,6 +24,6 @@ class Command(BaseCommand):
                 if website.last_crawl() \
                     and website.last_crawl().finished > recently:
                     continue
-                logging.info("found new website to crawl: %s" % website.name)
+                logging.info("found a website to crawl: %s" % website.name)
                 crawl(website)
             time.sleep(10)
