@@ -1,5 +1,5 @@
 User-agent: *
-Crawl-delay: 1.0
+Crawl-delay: 10.0
 
 User-agent: Slurp
 Crawl-delay: 10.0
