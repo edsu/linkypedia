@@ -5,6 +5,7 @@ Functions for getting info from wikipedia.
 import re
 import sys
 import json
+import time
 import urllib
 import logging
 import urllib2
@@ -72,11 +73,24 @@ def _api(params):
     first_page_key = data['query']['pages'].keys()[0]
     return data['query']['pages'][first_page_key]
 
-def _fetch(url, params=None):
+def _fetch(url, params=None, retries=5):
     if params:
         req = urllib2.Request(url, data=urllib.urlencode(params))
         req.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
     else:
         req = urllib2.Request(url)
     req.add_header('User-agent', 'linkpyediabot v0.1: http://github.com/edsu/linkypedia')
-    return urllib2.urlopen(req).read()
+
+    try:
+        return urllib2.urlopen(req).read()
+    except HTTPError, e:
+        if e.code == 504:
+            logging.warn("caught 504 error when talking to wikipedia")
+            retries -= 1
+            if retries == 0:
+                logging.info("no more tries left")
+                raise e
+            else:
+                logging.info("sleeping then trying again %i times" % retries)
+                time.sleep(2) # TODO: could make this back off slowly?
+                return _fetch(url, params, retries)
