@@ -5,11 +5,18 @@ wikipedia.
 
 Dependencies:
 
+- Python v2.6
 - Django v1.2
+- MySQL
+- mysql-python
+- BeautifulSoup
 - lxml
 
 Setup:
 
+- install dependencies
+- create database and user/password permissions
+- git clone https://edsu@github.com/edsu/linkypedia.git
 - cd linkypedia
 - cp settings.py.tmpl settings.py
 - add database credentials to linkypedia/settings.py
