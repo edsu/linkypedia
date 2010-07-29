@@ -83,7 +83,7 @@ def _fetch(url, params=None, retries=5):
 
     try:
         return urllib2.urlopen(req).read()
-    except HTTPError, e:
+    except urllib2.HTTPError, e:
         if e.code == 504:
             logging.warn("caught 504 error when talking to wikipedia")
             retries -= 1
