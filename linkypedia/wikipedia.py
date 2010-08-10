@@ -12,6 +12,8 @@ import urllib2
 
 import BeautifulSoup
 
+retries_between_api_errors = 5
+
 def url_to_title(url):
     url = str(url)
     match = re.match(r'http://.+/wiki/(.+)$', url)
@@ -73,7 +75,7 @@ def _api(params):
     first_page_key = data['query']['pages'].keys()[0]
     return data['query']['pages'][first_page_key]
 
-def _fetch(url, params=None, retries=5):
+def _fetch(url, params=None, retries=retries_between_api_errors):
     if params:
         req = urllib2.Request(url, data=urllib.urlencode(params))
         req.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
@@ -83,14 +85,16 @@ def _fetch(url, params=None, retries=5):
 
     try:
         return urllib2.urlopen(req).read()
-    except urllib2.HTTPError, e:
-        if e.code == 504:
-            logging.warn("caught 504 error when talking to wikipedia")
-            retries -= 1
-            if retries == 0:
-                logging.info("no more tries left")
-                raise e
-            else:
-                logging.info("sleeping then trying again %i times" % retries)
-                time.sleep(2) # TODO: could make this back off slowly?
-                return _fetch(url, params, retries)
+    except urllib2.URLError, e:
+        logging.warn("caught error when talking to wikipedia: %s" % e)
+        retries -= 1
+        if retries == 0:
+            logging.info("no more tries left")
+            raise e
+        else: 
+            # should back off 10, 20, 30, 40, 50 seconds
+            sleep_seconds = (retries_between_api_errors - retries) * 10
+            logging.info("sleeping %i seconds then trying again %i times" %
+                    (sleep_seconds, retries))
+            time.sleep(sleep_seconds)
+            return _fetch(url, params, retries)
