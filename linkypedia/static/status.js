@@ -5,7 +5,7 @@ $(document).ready(function() { setTimeout("get_last_update()", refresh_rate);});
 function get_last_update() {
     $.getJSON('/status.json', function(data) {
 
-        link = '<b>recently found: </b>' +
+        var link = '<b>recently found: </b>' +
                '<a href="' + data.wikipedia_url + '">' +
                data.wikipedia_page_title + '</a> referencing <a href="' + 
                data.target + '">' + data.website_name + '</a>';
@@ -18,7 +18,7 @@ function get_last_update() {
         }
 
         if (data.current_crawl) {
-            crawl = '<b>currently crawling:</b> ' + 
+            var crawl = '<b>currently crawling:</b> ' + 
                    '<a href="' + data.current_crawl.link + '">' +
                    data.current_crawl.name +
                    '</a>';
