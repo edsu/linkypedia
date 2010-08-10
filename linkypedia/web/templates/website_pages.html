@@ -1,7 +1,8 @@
 {% extends "website.html" %}
 {% load humanize %}
 
-{% block extra_head %}<link rel="alternate" type="application/atom+xml" title="wikipedia page feed" href="{% url website_pages_feed website.id %}" />{% endblock %}
+{% block extra_head %}<link rel="alternate" type="application/atom+xml" title="wikipedia page feed" href="{% url website_pages_feed website.id %}" />
+<title>linkypedia | pages for {{ website.name }} ({{ website.url }})</title>{% endblock %}
 {% block pages %}
     {% if paginator.num_pages > 1 %}
     <br />
