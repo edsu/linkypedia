@@ -49,6 +49,20 @@ body {
     background-color: #eeeeee;
 }
 
+#update {
+    text-align: center;
+}
+
+#last_link {
+    background-color: #ffff99;
+    display: none;
+}
+
+#current_crawl {
+    background-color: #ffccff;
+    display: none;
+}
+
 #slogan a {
     text-decoration: underline;
 }

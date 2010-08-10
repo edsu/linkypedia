@@ -2,8 +2,9 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" type="text/css" href="/static/style.css">
-        <link href='http://fonts.googleapis.com/css?family=IM+Fell+DW+Pica' rel='stylesheet' type='text/css'>
-        {% block extra_links %}{% endblock %}
+        <link href="http://fonts.googleapis.com/css?family=IM+Fell+DW+Pica" rel="stylesheet" type="text/css">
+        <script src="/static/jquery-1.4.2.min.js" type="text/javascript"></script>
+        {% block extra_head %}{% endblock %}
         <script type="text/javascript">
         var _gaq = _gaq || [];
         _gaq.push(['_setAccount', 'UA-16871278-1']);
@@ -14,8 +15,9 @@
             ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
             var s = document.getElementsByTagName('script')[0];
             s.parentNode.insertBefore(ga, s); 
-        })();
+            })();
         </script>
+        {% block extra_script %}{% endblock %}
     </head>
     <body>
         <div id="header">

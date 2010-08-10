@@ -31,6 +31,7 @@ urlpatterns = patterns(
     url(r'^about/$', 'about', name='about'),
 
     url(r'^lookup/$', 'lookup', name='lookup'),
+    url(r'^status.json$', 'status', name='status'),
 
     url(r'robots.txt','robots', name='robots'),
     url(r'^static/(?P<path>.*)$', serve, {'document_root': 'static'}),

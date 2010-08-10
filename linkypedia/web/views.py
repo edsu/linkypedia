@@ -188,3 +188,23 @@ def lookup(request):
 
 def robots(request):
     return render_to_response('robots.txt', mimetype='text/plain')
+
+def status(request):
+    link = m.Link.objects.all().order_by('-created')[0]
+    update = {
+        'wikipedia_url': link.wikipedia_page.url,
+        'wikipedia_page_title': link.wikipedia_page.title,
+        'target': link.target,
+        'website_name': link.website.name,
+        'website_url': link.website.url,
+        'created': rfc3339(link.created),
+    }
+
+    crawls = m.Crawl.objects.filter(finished=None).order_by('-started')
+    if crawls.count() > 0:
+        website = crawls[0].website
+        crawl = {'name': website.name, 'url': website.url, 
+                'link': website.get_absolute_url()}
+        update['current_crawl'] = crawl
+
+    return HttpResponse(json.dumps(update, indent=2), mimetype='application/json')
