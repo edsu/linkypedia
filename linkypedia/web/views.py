@@ -11,16 +11,18 @@ from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
+from django.views.decorators.cache import cache_page
 
 from linkypedia.web import models as m
 from linkypedia.rfc3339 import rfc3339
 from linkypedia.paginator import DiggPaginator
 from linkypedia.wikipedia import _fetch
-from linkypedia.settings import CRAWL_CUTOFF
+from linkypedia.settings import CRAWL_CUTOFF, CACHE_TTL_SECS
 
 def about(request):
     return render_to_response('about.html')
 
+@cache_page(CACHE_TTL_SECS)
 def websites(request):
     # create the website instance if one was submitted and
     # redirect to the new website view
