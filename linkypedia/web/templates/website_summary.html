@@ -35,11 +35,18 @@
         {% endif %}
         </td> 
     </tr>
-    {% if cutoff %}
+    {% if website.added_by %}
     <tr class="odd">
+        <td>Added By:</td>
+        <td>{{ website.added_by }}<td>
+    </tr>
+    {% endif %}
+    {% if cutoff %}
+    <tr class="even">
         <td style="color: red;">Crawl Cutoff:</td>
         <td style="color: red;">{{ cutoff }}</td>
     </tr>
+
     {% endif %}
 </table>
 

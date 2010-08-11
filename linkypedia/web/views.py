@@ -28,7 +28,7 @@ def websites(request):
     # redirect to the new website view
     new_website_url = request.POST.get('new_website_url', None)
     if new_website_url:
-        website = _setup_new_website(new_website_url)
+        website = _setup_new_website(new_website_url, request)
         return HttpResponseRedirect(website.get_absolute_url())
     
     websites = m.Website.objects.all()
@@ -137,7 +137,7 @@ def website_categories(request, website_id, page_num=1):
     title = "website: %s" % website.url
     return render_to_response('website_categories.html', dictionary=locals())
 
-def _setup_new_website(url):
+def _setup_new_website(url, request):
     websites = m.Website.objects.filter(url=url)
     if websites.count() > 0:
         return websites[0]
@@ -157,7 +157,8 @@ def _setup_new_website(url):
                 name = name.split(' - ')[0]
         else:
             name = host
-        website = m.Website.objects.create(url=url, name=name)
+        website = m.Website.objects.create(url=url, name=name,
+                added_by=request.META['REMOTE_ADDR'])
 
         # try to get the favicon
         favicon_url = 'http://%s/favicon.ico' % host

@@ -54,6 +54,7 @@ class Website(m.Model):
     name = m.TextField()
     favicon_url = m.TextField()
     created = m.DateTimeField(auto_now_add=True)
+    added_by = m.CharField(max_length=255)
 
     @m.permalink
     def get_absolute_url(self):
