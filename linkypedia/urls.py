@@ -25,8 +25,11 @@ urlpatterns = patterns(
     url(r'^websites/(?P<website_id>\d+)/categories/$', 'website_categories',
         name='website_categories'),
 
-    url(r'^website/(?P<website_id>\d+)/categories/(?P<page_num>\d+)/$',
+    url(r'^websites/(?P<website_id>\d+)/categories/(?P<page_num>\d+)/$',
         'website_categories', name='website_categories_page'),
+
+    url(r'^websites/(?P<website_id>\d+)/users/$', 'website_users', 
+        name='website_users'),
 
     url(r'^about/$', 'about', name='about'),
 

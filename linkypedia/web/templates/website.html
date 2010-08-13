@@ -17,6 +17,9 @@
     <span class="{% if tab == "categories" %}active_tab{% else %}inactive_tab{% endif %}">
         <a href="{% url website_categories website.id %}">categories</a>
     </span>
+    <span class="{% if tab == "users" %}active_tab{% else %}inactive_tab{% endif %}">
+        <a href="{% url website_users website.id %}">users</a>
+    </span>
 </div>
 
 <div id="tab_summary">

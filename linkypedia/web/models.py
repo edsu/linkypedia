@@ -43,6 +43,17 @@ class WikipediaPage(m.Model):
         wikipedia_page.save()
         return wikipedia_page, True
 
+    def associated_username(self):
+        """
+        If the page is associated with a users profile it returns
+        that username.
+        """
+        match = re.search(r'^User.*?:([^/]+)', self.title)
+        if match:
+            return match.group(1)
+        else:
+            return None
+
 class Link(m.Model):
     created = m.DateTimeField(auto_now_add=True)
     wikipedia_page = m.ForeignKey('WikipediaPage', related_name='links')
@@ -75,8 +86,23 @@ class Website(m.Model):
     def categories(self):
         return WikipediaCategory.objects.filter(pages__links__website=self).distinct().annotate(Count('pages'))
 
+    # TODO: is this still used?
     def wikipedia_pages(self):
         return WikipediaPage.objects.filter(links__website=self).distinct()
+
+class WikipediaUser(m.Model):
+    username = m.CharField(primary_key=True, max_length=255)
+    registration = m.DateTimeField(max_length=255, null=True)
+    wikipedia_pages = m.ManyToManyField('WikipediaPage', related_name='users')
+    gender = m.TextField(null=True)
+    edit_count = m.IntegerField(default=0)
+    created = m.DateTimeField(auto_now_add=True)
+    emailable = m.BooleanField(default=False)
+
+class WikipediaGroup(m.Model):
+    name = m.TextField()
+    wikipedia_users = m.ManyToManyField('WikipediaUser', related_name='groups')
+    created = m.DateTimeField(auto_now_add=True)
 
 class Crawl(m.Model):
     started = m.DateTimeField(null=True)

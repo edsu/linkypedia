@@ -17,6 +17,12 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         logging.info("starting crawl daemon")
+
+        logging.info("setting any unfinished crawls to finished")
+        for c in m.Crawl.objects.filter(finished=None):
+            c.finished = datetime.datetime.now()
+            c.save()
+
         while True:
            
             # look for websites that haven't been updated in the last 4 hrs 

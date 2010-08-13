@@ -2,34 +2,19 @@ refresh_rate = 5000;
 
 $(document).ready(function() { setTimeout("get_last_update()", refresh_rate);});
 
-function get_last_update() {
+function get_last_update(since) {
     $.getJSON('/status.json', function(data) {
-
-        var link = '<b>recently found: </b>' +
+        var html = '<b>recently found: </b>' +
                '<a href="' + data.wikipedia_url + '">' +
                data.wikipedia_page_title + '</a> referencing <a href="' + 
                data.target + '">' + data.website_name + '</a>';
-    
-        if (link != $('#last_link').html()) {
+
+        if (since != data.created) {
             $('#last_link').fadeOut('slow', function() {
-                $('#last_link').html(link);
+                $('#last_link').html(html);
                 $('#last_link').fadeIn('slow');
             });
         }
-
-        if (data.current_crawl) {
-            var crawl = '<b>currently crawling:</b> ' + 
-                   '<a href="' + data.current_crawl.link + '">' +
-                   data.current_crawl.name +
-                   '</a>';
-            if (crawl != $('#current_crawl').html()) {
-                $('#current_crawl').fadeOut('slow', function() {
-                    $('#current_crawl').html(crawl);
-                    $('#current_crawl').fadeIn('slow');
-                });
-            }
-        }
-
+        setTimeout('get_last_update("' + data.created + '")', refresh_rate);
     });
-    setTimeout("get_last_update()", refresh_rate);
 }

@@ -64,7 +64,7 @@ def website_summary(request, website_id):
     return render_to_response('website_summary.html', dictionary=locals())
 
 def website_pages(request, website_id):
-    website = m.Website.objects.get(id=website_id)
+    website = get_object_or_404(m.Website, id=website_id)
 
     page_num = request.GET.get('page', 1)
     page_num = int(page_num)
@@ -98,17 +98,17 @@ def website_pages(request, website_id):
 
     return render_to_response('website_pages.html', dictionary=locals())
 
+
 def website_page_links(request, website_id, page_id):
-    website = m.Website.objects.get(id=website_id)
+    website = get_object_or_404(m.Website, id=website_id)
     wikipedia_page = m.WikipediaPage.objects.get(id=page_id)
     links = m.Link.objects.filter(wikipedia_page=wikipedia_page,
             website=website)
 
     return render_to_response('website_page_links.html', dictionary=locals())
 
-
 def website_pages_feed(request, website_id, page_num=1):
-    website = m.Website.objects.get(id=website_id)
+    website = get_object_or_404(m.Website, id=website_id)
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
     wikipedia_pages = wikipedia_pages.annotate(Count('links'))
     wikipedia_pages = wikipedia_pages.order_by('-last_modified')
@@ -136,6 +136,51 @@ def website_categories(request, website_id, page_num=1):
     tab_summary = "Categories for %s" % website.name 
     title = "website: %s" % website.url
     return render_to_response('website_categories.html', dictionary=locals())
+
+def website_users(request, website_id):
+    website = get_object_or_404(m.Website, id=website_id)
+    users = m.WikipediaUser.objects.filter(wikipedia_pages__links__website=website)
+    users = users.distinct()
+    users = users.order_by('username')
+    tab = 'users'
+    title = "website: %s" % website.url
+    return render_to_response('website_users.html', dictionary=locals())
+
+def lookup(request):
+    url = request.REQUEST.get('url', None)
+    results = []
+    for link in m.Link.objects.filter(target=url):
+        w = link.wikipedia_page
+        result = {
+            'url': w.url, 
+            'title': w.title, 
+            'last_modified': rfc3339(w.last_modified)
+            }
+        results.append(result)
+    return HttpResponse(json.dumps(results, indent=2), mimetype='application/json')
+
+def robots(request):
+    return render_to_response('robots.txt', mimetype='text/plain')
+
+def status(request):
+    link = m.Link.objects.all().order_by('-created')[0]
+    update = {
+        'wikipedia_url': link.wikipedia_page.url,
+        'wikipedia_page_title': link.wikipedia_page.title,
+        'target': link.target,
+        'website_name': link.website.name,
+        'website_url': link.website.url,
+        'created': rfc3339(link.created),
+    }
+
+    crawls = m.Crawl.objects.filter(finished=None).order_by('-started')
+    if crawls.count() > 0:
+        website = crawls[0].website
+        crawl = {'name': website.name, 'url': website.url, 
+                'link': website.get_absolute_url()}
+        update['current_crawl'] = crawl
+
+    return HttpResponse(json.dumps(update, indent=2), mimetype='application/json')
 
 def _setup_new_website(url, request):
     websites = m.Website.objects.filter(url=url)
@@ -175,39 +220,3 @@ def _setup_new_website(url, request):
         pass
 
     return website
-
-def lookup(request):
-    url = request.REQUEST.get('url', None)
-    results = []
-    for link in m.Link.objects.filter(target=url):
-        w = link.wikipedia_page
-        result = {
-            'url': w.url, 
-            'title': w.title, 
-            'last_modified': rfc3339(w.last_modified)
-            }
-        results.append(result)
-    return HttpResponse(json.dumps(results, indent=2), mimetype='application/json')
-
-def robots(request):
-    return render_to_response('robots.txt', mimetype='text/plain')
-
-def status(request):
-    link = m.Link.objects.all().order_by('-created')[0]
-    update = {
-        'wikipedia_url': link.wikipedia_page.url,
-        'wikipedia_page_title': link.wikipedia_page.title,
-        'target': link.target,
-        'website_name': link.website.name,
-        'website_url': link.website.url,
-        'created': rfc3339(link.created),
-    }
-
-    crawls = m.Crawl.objects.filter(finished=None).order_by('-started')
-    if crawls.count() > 0:
-        website = crawls[0].website
-        crawl = {'name': website.name, 'url': website.url, 
-                'link': website.get_absolute_url()}
-        update['current_crawl'] = crawl
-
-    return HttpResponse(json.dumps(update, indent=2), mimetype='application/json')

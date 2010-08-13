@@ -21,6 +21,7 @@
         <updated>{{ website.created|rfc3339 }}</updated>
         <summary>The website "{{ website.name }}" at {{ website.url }} was added to linkypedia at {{ website.created }}</summary>
         <linkypedia:links>{{ website.links.count }}</linkypedia:links>
+        {% if website.added_by %}<linkypedia:ip>{{ website.added_by }}</linkypedia:ip>{% endif %}
     </entry>
     {% endif %}
     {% endfor %}

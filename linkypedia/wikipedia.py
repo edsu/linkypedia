@@ -23,24 +23,33 @@ def url_to_title(url):
         return None
 
 def info(title):
-    logging.info("looking up info for %s at wikipedia" % title)
+    logging.info("wikipedia lookup for page: %s " % title)
     q = {'action': 'query', 
          'prop': 'info', 
          'titles': title.encode('utf-8'),
          }
-    return _api(q)
+    return _first(_api(q))
 
 def categories(title):
-    logging.info("looking up categories for %s" % title)
+    logging.info("wkipedia look up for page categories: %s" % title)
     q = {'action': 'query',
          'prop': 'categories',
          'titles': title.encode('utf-8'),
          }
     try:
-        return _api(q)['categories']
+        return _first(_api(q)['categories'])
     except KeyError:
         return []
     
+def users(usernames):
+    usernames = [u.encode('utf-8') for u in usernames]
+    logging.info("wikipedia look up for users: %s" % usernames)
+    q = {'action': 'query',
+         'list': 'users',
+         'ususers': '|'.join(usernames),
+         'usprop': 'blockinfo|groups|editcount|registration|emailable|gender',
+        }
+    return _api(q)['query']['users']
 
 def links(site, lang='en', page_size=500, offset=0):
     """
@@ -72,11 +81,16 @@ def _api(params):
     url = 'http://en.wikipedia.org/w/api.php'
     response = _fetch(url, params)
     data = json.loads(response)
+    return data
+
+def _first(data):
     first_page_key = data['query']['pages'].keys()[0]
     return data['query']['pages'][first_page_key]
 
 def _fetch(url, params=None, retries=retries_between_api_errors):
     if params:
+        # make sure everything is utf-8 encoded before handing off to urlencode
+        #params = dict([[k, v.encode('utf-8')] for k, v in params.items()])
         req = urllib2.Request(url, data=urllib.urlencode(params))
         req.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
     else:
