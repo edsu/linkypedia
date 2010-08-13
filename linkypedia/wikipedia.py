@@ -37,8 +37,9 @@ def categories(title):
          'titles': title.encode('utf-8'),
          }
     try:
-        return _first(_api(q)['categories'])
+        return _first(_api(q))['categories']
     except KeyError:
+        logging.error("uhoh, unable to find categories key!")
         return []
     
 def users(usernames):
@@ -84,13 +85,14 @@ def _api(params):
     return data
 
 def _first(data):
+    # some queries can take a list of things but we are only sending
+    # one at a time, and this helper just looks for the first (and only)
+    # page in the response and returns it
     first_page_key = data['query']['pages'].keys()[0]
     return data['query']['pages'][first_page_key]
 
 def _fetch(url, params=None, retries=retries_between_api_errors):
     if params:
-        # make sure everything is utf-8 encoded before handing off to urlencode
-        #params = dict([[k, v.encode('utf-8')] for k, v in params.items()])
         req = urllib2.Request(url, data=urllib.urlencode(params))
         req.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
     else:

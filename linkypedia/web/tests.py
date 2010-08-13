@@ -20,13 +20,19 @@ class WikipediaTest(TestCase):
         self.assertTrue(users[0].has_key('registration'))
         self.assertEqual(users[1]['name'], 'Nichtich')
 
+    def test_categories(self):
+        info = wikipedia.categories('Skull_and_Bones')
+        self.assertTrue(len(info) > 1)
+
 class LinkypediaTests(TestCase):
 
-    def test_user_harvesting(self):
+    def test_harvest(self):
         # get a website with some user pages
         website = m.Website(name='Europeana', url='http://www.europeana.eu')
         website.save()
         crawl(website)
+
+        self.assertTrue(m.WikipediaCategory.objects.all().count() > 0)
 
         created, updated = load_users()
         self.assertTrue(created > 0)
