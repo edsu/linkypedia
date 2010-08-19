@@ -102,6 +102,11 @@ def _fetch(url, params=None, retries=retries_between_api_errors):
     try:
         return urllib2.urlopen(req).read()
     except urllib2.URLError, e:
+        return _fetch_again(e, url, params, retries)
+    except urllib2.HTTPError, e:
+        return _fetch_again(e, url, params, retries)
+
+def _fetch_again(e, url, params, retries):
         logging.warn("caught error when talking to wikipedia: %s" % e)
         retries -= 1
         if retries == 0:
