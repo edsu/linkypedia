@@ -9,6 +9,7 @@ Setup:
 - cd linkypedia
 - pip install -r requirements.pip
 - create database and user/password permissions
+- cd linkypedia
 - cp settings.py.tmpl settings.py
 - add database credentials to linkypedia/settings.py
 - python manage.py syncdb
