@@ -90,6 +90,9 @@ class Website(m.Model):
     def wikipedia_pages(self):
         return WikipediaPage.objects.filter(links__website=self).distinct()
 
+    def __unicode__(self):
+        return "%s <%s> (%s)" % (self.name, self.url, self.id)
+
 class WikipediaUser(m.Model):
     username = m.CharField(primary_key=True, max_length=255)
     registration = m.DateTimeField(max_length=255, null=True)

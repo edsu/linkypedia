@@ -13,26 +13,13 @@
     <strong>explore</strong> how your web content is used on wikipedia,
     <strong>extract</strong> crowd-sourced information about your web resources,
     and <strong>connect</strong> with wikipedians who are using your stuff. More
-    about the rationale for linkypedia can be found <a href="/about">here</a>.
-
-    Note: this is a <strong>demo</strong> site, and can go down at any time. 
-    But please feel free to 
-    <a href="http://github.com/edsu/linkypedia">download</a>
-    the code and run it in your own environment if you want.
+    about the rationale for linkypedia can be found <a href="/about">here</a>.</
     <a href="{% url websites_feed %}"><img class="feed_icon" src="/static/feed.png" /></a>
 </div>
 
 <p id="update">
 <span id="last_link"></span>
 </p>
-
-<div id="add_site">
-<form action="" method="post">
-    <input type="text" name="new_website_url">
-    <input type="submit" name="website" value="add a website url" title="go ahead, really!">
-    {% csrf_token %}
-</form>
-</div>
 
 <div id="websites">
     <table id="websites">
@@ -55,4 +42,16 @@
     {% endfor %}
     </table>
 </div>
+
+<p id="apology">
+At one point linkypedia allowed anyone to add a website to monitor, 
+but too many were added for this tiny server to handle. A 
+<a href="http://github.com/edsu/linkypedia/wiki/linkypedia-v2">redesign</a>
+is in progress, but until it's online please email 
+<a href="mailto:ehs@pobox.com">ehs@pobox.com</a> if there is a site
+you would like added. Or grab 
+the code from <a href="http://github.com/edsu/linkypedia">GitHub</a> and 
+run it in your own environment!
+</p>
+
 {% endblock %}

@@ -16,7 +16,6 @@ from django.views.decorators.cache import cache_page
 from linkypedia.web import models as m
 from linkypedia.rfc3339 import rfc3339
 from linkypedia.paginator import DiggPaginator
-from linkypedia.wikipedia import _fetch
 from linkypedia.settings import CRAWL_CUTOFF, CACHE_TTL_SECS
 
 def about(request):
@@ -24,13 +23,6 @@ def about(request):
 
 @cache_page(CACHE_TTL_SECS)
 def websites(request):
-    # create the website instance if one was submitted and
-    # redirect to the new website view
-    new_website_url = request.POST.get('new_website_url', None)
-    if new_website_url:
-        website = _setup_new_website(new_website_url, request)
-        return HttpResponseRedirect(website.get_absolute_url())
-    
     websites = m.Website.objects.all()
     websites = websites.annotate(Count('links'))
     websites = websites.order_by('-links__count')
@@ -70,7 +62,7 @@ def website_pages(request, website_id):
     page_num = int(page_num)
 
     # make sure we support the order
-    order = request.GET.get('order', 'links')
+    order = request.GET.get('order', 'update')
     direction = request.GET.get('direction', 'desc')
     other_direction = 'asc' if direction == 'desc' else 'desc'
 
@@ -181,42 +173,3 @@ def status(request):
         update['current_crawl'] = crawl
 
     return HttpResponse(json.dumps(update, indent=2), mimetype='application/json')
-
-def _setup_new_website(url, request):
-    websites = m.Website.objects.filter(url=url)
-    if websites.count() > 0:
-        return websites[0]
-
-    website = None
-    try:
-        if not url.startswith('http://'):
-            url = "http://" + url
-        host = urlparse.urlparse(url).netloc
-        parser = etree.HTMLParser()
-        html = cStringIO.StringIO(_fetch(url))
-        doc = etree.parse(html, parser)
-        title = doc.xpath('/html/head/title')
-        if len(title) > 0:
-            name = title[0].text
-            if ' - ' in name:
-                name = name.split(' - ')[0]
-        else:
-            name = host
-        website = m.Website.objects.create(url=url, name=name,
-                added_by=request.META['REMOTE_ADDR'])
-
-        # try to get the favicon
-        favicon_url = 'http://%s/favicon.ico' % host
-        urllib2.urlopen(favicon_url)
-        website.favicon_url = favicon_url
-        website.save()
-
-    except urllib2.HTTPError, e:
-        # can't get URL
-        pass
-
-    except ValueError, e:
-        # bad URL
-        pass
-
-    return website

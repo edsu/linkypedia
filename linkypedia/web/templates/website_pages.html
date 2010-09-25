@@ -30,7 +30,9 @@
 {% endblock %}
 
 {% block tab_summary %}
-Wikipedia pages for <a href="{{ website.url }}">{{ website.name }}</a>. <br />
+Wikipedia pages for <a href="{{ website.url }}">{{ website.name }}</a>. 
+<br />
+<br />
 Put this <a href="{% url website_pages_feed website.id %}">feed</a> in your 
 favorite feed reader and get notified of new pages that reference this 
 website. <a href="{% url website_pages_feed website.id %}">

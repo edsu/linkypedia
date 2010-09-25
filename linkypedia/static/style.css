@@ -29,6 +29,15 @@ body {
     clear: both;
 }
 
+#apology {
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+    clear: both;
+    background-color: #ffffcc;
+    padding: 5px;
+}
+
 #logo {
     font-size: 22pt;
     font-style: italic;
