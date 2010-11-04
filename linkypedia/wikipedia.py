@@ -1,5 +1,5 @@
 """
-Functions for getting info from wikipedia.
+module for interacting with wikipedia
 """
 
 import re
@@ -7,12 +7,54 @@ import sys
 import json
 import time
 import urllib
+import getpass
 import logging
 import urllib2
 
 import BeautifulSoup
+import irclib
 
-retries_between_api_errors = 5
+RETRIES_BETWEEN_API_ERRORS = 5
+IRC_MESSAGE_PATTERN = re.compile('\[\[(.+?)\]\] (.+)? (http:.+?)? (?:\* (.+?) \*)? (?:\(([+-]\d+)\))? (.+)?')
+
+
+class WikipediaUpdatesClient(irclib.SimpleIRCClient):
+    """Fetch live update feed from irc://irc.wikimedia.org/en.wikipedia
+    """
+
+    def on_error(self, connection, event):
+        print event
+
+    def on_created(self, connection, event):
+        connection.join("#en.wikipedia")
+
+    def on_pubmsg(self, connection, event):
+        msg = self._strip_color(event.arguments()[0])
+        match = IRC_MESSAGE_PATTERN.search(msg)
+        if match:
+            page, status, diff_url, user, bytes_changed, msg = match.groups()
+            print "page: %s" % page
+            print "status: %s" % status
+            print "diff: %s" % diff_url
+            print "user: %s" % user
+            print "bytes: %s" % bytes_changed
+            print "msg: %s" % msg
+            print 
+        else:
+            print "NO MATCH: %s" % msg
+            connection.close()
+            sys.exit(-1)
+
+
+    def _strip_color(self, msg):
+        # should remove irc color coding
+        return re.sub(r"(\x03|\x02)([0-9]{1,2}(,[0-9]{1,2})?)?", "", msg)
+
+
+def start_update_stream(username):
+    irc = WikipediaUpdatesClient()
+    irc.connect("irc.wikimedia.org", 6667, username)
+    irc.start()
 
 def url_to_title(url):
     url = str(url)
@@ -91,7 +133,7 @@ def _first(data):
     first_page_key = data['query']['pages'].keys()[0]
     return data['query']['pages'][first_page_key]
 
-def _fetch(url, params=None, retries=retries_between_api_errors):
+def _fetch(url, params=None, retries=RETRIES_BETWEEN_API_ERRORS):
     if params:
         req = urllib2.Request(url, data=urllib.urlencode(params))
         req.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
