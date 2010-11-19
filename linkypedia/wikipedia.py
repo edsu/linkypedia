@@ -32,6 +32,7 @@ class WikipediaUpdatesClient(irclib.SimpleIRCClient):
         msg = self._strip_color(event.arguments()[0])
         match = IRC_MESSAGE_PATTERN.search(msg)
         if match:
+            # todo: add message to queue
             page, status, diff_url, user, bytes_changed, msg = match.groups()
             print "page: %s" % page
             print "status: %s" % status
@@ -41,6 +42,7 @@ class WikipediaUpdatesClient(irclib.SimpleIRCClient):
             print "msg: %s" % msg
             print 
         else:
+            # should never happen
             print "NO MATCH: %s" % msg
             connection.close()
             sys.exit(-1)
@@ -56,6 +58,7 @@ def start_update_stream(username):
     irc.connect("irc.wikimedia.org", 6667, username)
     irc.start()
 
+
 def url_to_title(url):
     url = str(url)
     match = re.match(r'http://.+/wiki/(.+)$', url)
@@ -64,6 +67,7 @@ def url_to_title(url):
     else:
         return None
 
+
 def info(title):
     logging.info("wikipedia lookup for page: %s " % title)
     q = {'action': 'query', 
@@ -71,6 +75,7 @@ def info(title):
          'titles': title.encode('utf-8'),
          }
     return _first(_api(q))
+
 
 def categories(title):
     logging.info("wkipedia look up for page categories: %s" % title)
@@ -83,6 +88,7 @@ def categories(title):
     except KeyError:
         logging.error("uhoh, unable to find categories key!")
         return []
+
     
 def users(usernames):
     usernames = [u.encode('utf-8') for u in usernames]
@@ -93,6 +99,7 @@ def users(usernames):
          'usprop': 'blockinfo|groups|editcount|registration|emailable|gender',
         }
     return _api(q)['query']['users']
+
 
 def links(site, lang='en', page_size=500, offset=0):
     """
@@ -119,6 +126,7 @@ def links(site, lang='en', page_size=500, offset=0):
         else:
             break
 
+
 def _api(params):
     params['format'] = 'json'
     url = 'http://en.wikipedia.org/w/api.php'
@@ -126,12 +134,14 @@ def _api(params):
     data = json.loads(response)
     return data
 
+
 def _first(data):
     # some queries can take a list of things but we are only sending
     # one at a time, and this helper just looks for the first (and only)
     # page in the response and returns it
     first_page_key = data['query']['pages'].keys()[0]
     return data['query']['pages'][first_page_key]
+
 
 def _fetch(url, params=None, retries=RETRIES_BETWEEN_API_ERRORS):
     if params:
@@ -147,6 +157,7 @@ def _fetch(url, params=None, retries=RETRIES_BETWEEN_API_ERRORS):
         return _fetch_again(e, url, params, retries)
     except urllib2.HTTPError, e:
         return _fetch_again(e, url, params, retries)
+
 
 def _fetch_again(e, url, params, retries):
         logging.warn("caught error when talking to wikipedia: %s" % e)

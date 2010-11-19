@@ -2,3 +2,4 @@ django
 MySQL-python
 BeautifulSoup
 lxml
+celery
