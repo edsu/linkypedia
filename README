@@ -5,7 +5,7 @@ wikipedia.
 
 Setup:
 
-- git clone https://edsu@github.com/edsu/linkypedia.git
+- git clone https://github.com/edsu/linkypedia.git
 - cd linkypedia
 - pip install -r requirements.pip
 - create database and user/password permissions
