@@ -127,6 +127,26 @@ def links(site, lang='en', page_size=500, offset=0):
             break
 
 
+def load_links_dump(filename):
+    pattern = r"\((\d+),'(.+?)','(.+?)'\)"
+    fh = open(filename)
+
+    line = ""
+    while True:
+        buff = fh.read(1024)
+        if not buff:
+            break
+
+        line += buff
+
+        rows = list(re.finditer(pattern, line))
+        for row in rows:
+            print row.groups()
+
+        if len(rows) > 0:
+            line = line[rows[-1].end():]
+
+
 def _api(params):
     params['format'] = 'json'
     url = 'http://en.wikipedia.org/w/api.php'
