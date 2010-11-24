@@ -14,6 +14,8 @@ import urllib2
 import BeautifulSoup
 import irclib
 
+from web import tasks
+
 RETRIES_BETWEEN_API_ERRORS = 5
 IRC_MESSAGE_PATTERN = re.compile('\[\[(.+?)\]\] (.+)? (http:.+?)? (?:\* (.+?) \*)? (?:\(([+-]\d+)\))? (.+)?')
 
@@ -41,6 +43,10 @@ class WikipediaUpdatesClient(irclib.SimpleIRCClient):
             print "bytes: %s" % bytes_changed
             print "msg: %s" % msg
             print 
+            # ignore what look like non-articles
+            if ':' not in page:
+                result = tasks.get_external_links.delay(page)
+                result.get()
         else:
             # should never happen
             print "NO MATCH: %s" % msg
@@ -99,6 +105,30 @@ def users(usernames):
          'usprop': 'blockinfo|groups|editcount|registration|emailable|gender',
         }
     return _api(q)['query']['users']
+
+
+def extlinks(page_title, limit=100, offset=0):
+    page_title = page_title.replace(' ', '_')
+    q = {'action': 'query',
+         'prop': 'extlinks',
+         'titles': page_title,
+         'ellimit': limit,
+         'eloffset': offset,
+        }
+    links = _first(_api(q))
+
+    if links.has_key('extlinks'):
+        # strip out just the urls from the json response
+        links = [l[u"*"] for l in links['extlinks']]
+    else:
+        # no links
+        links = []
+
+    # get more if it looks like we might not have gotten them all
+    if len(links) == limit:
+        links.extend(extlinks(page_title, limit, offset + limit))
+
+    return links
 
 
 def links(site, lang='en', page_size=500, offset=0):

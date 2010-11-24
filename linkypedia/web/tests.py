@@ -11,6 +11,12 @@ class WikipediaTest(TestCase):
         self.assertEqual(info['pageid'], 842462)
         self.assertEqual(info['title'], 'Pierre-Charles Le Sueur')
 
+    def test_extlinks(self):
+        extlinks = wikipedia.extlinks('BagIt')
+        self.assertTrue(len(extlinks) > 10)
+        for link in extlinks:
+            self.assertTrue(link.startswith('http'))
+
     def test_users(self):
         users = wikipedia.users(['edsu', 'nichtich'])
         self.assertEqual(len(users), 2)
