@@ -9,11 +9,13 @@ from django.db.models import Count
 from linkypedia import wikipedia
 from linkypedia.rfc3339 import rfc3339_parse
 
+
 class WikipediaCategory(m.Model):
     title = m.CharField(primary_key=True, max_length=255)
 
     def __unicode__(self):
         return self.title
+
 
 class WikipediaPage(m.Model):
     url = m.CharField(null=False, max_length=500)
@@ -54,11 +56,13 @@ class WikipediaPage(m.Model):
         else:
             return None
 
+
 class Link(m.Model):
     created = m.DateTimeField(auto_now_add=True)
     wikipedia_page = m.ForeignKey('WikipediaPage', related_name='links')
     target = m.TextField()
     website = m.ForeignKey('Website', related_name='links')
+
 
 class Website(m.Model):
     url = m.TextField()
@@ -93,6 +97,7 @@ class Website(m.Model):
     def __unicode__(self):
         return "%s <%s> (%s)" % (self.name, self.url, self.id)
 
+
 class WikipediaUser(m.Model):
     username = m.CharField(primary_key=True, max_length=255)
     registration = m.DateTimeField(max_length=255, null=True)
@@ -102,10 +107,12 @@ class WikipediaUser(m.Model):
     created = m.DateTimeField(auto_now_add=True)
     emailable = m.BooleanField(default=False)
 
+
 class WikipediaGroup(m.Model):
     name = m.TextField()
     wikipedia_users = m.ManyToManyField('WikipediaUser', related_name='groups')
     created = m.DateTimeField(auto_now_add=True)
+
 
 class Crawl(m.Model):
     started = m.DateTimeField(null=True)

@@ -11,8 +11,8 @@ import getpass
 import logging
 import urllib2
 
-import BeautifulSoup
 import irclib
+import BeautifulSoup
 
 from web import tasks
 
@@ -156,25 +156,6 @@ def links(site, lang='en', page_size=500, offset=0):
         else:
             break
 
-
-def load_links_dump(filename):
-    pattern = r"\((\d+),'(.+?)','(.+?)'\)"
-    fh = open(filename)
-
-    line = ""
-    while True:
-        buff = fh.read(1024)
-        if not buff:
-            break
-
-        line += buff
-
-        rows = list(re.finditer(pattern, line))
-        for row in rows:
-            print row.groups()
-
-        if len(rows) > 0:
-            line = line[rows[-1].end():]
 
 
 def _api(params):
