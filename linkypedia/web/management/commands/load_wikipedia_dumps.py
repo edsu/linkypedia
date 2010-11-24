@@ -1,9 +1,11 @@
 import re
 import urlparse
 
+from django.db import reset_queries
 from django.core.management.base import BaseCommand
 
 from linkypedia import wikipedia
+from linkypedia.web import models as m
 
 
 class Command(BaseCommand):
@@ -14,8 +16,7 @@ class Command(BaseCommand):
         load_links_dump(links_filename)
 
 
-def load_pages_dump(filename):
-    #(10,0,'AccessibleComputing','',0,1,0,0.33167112649574,'20100727152717',133452289,57)
+def load_pages_dump(filename): #(10,0,'AccessibleComputing','',0,1,0,0.33167112649574,'20100727152717',133452289,57)
     pattern = r"\((\d+),(\d+),'(.+?)','.*?',\d+,\d+,\d+,\d\.\d+,'.+?',\d+,\d+\)"
     parse_sql(filename, pattern, process_page_row)
 
@@ -43,9 +44,6 @@ def parse_sql(filename, pattern, func):
         if len(rows) > 0:
             line = line[rows[-1].end():]
 
-        print line
-
-
 
 def process_externallink_row(row):
     page_id, url, reversed_url = row
@@ -55,5 +53,16 @@ def process_externallink_row(row):
 
     
 def process_page_row(row):
-    print row[0:4]
+    # ignore non-article pages
+    if row[1] != '0':
+        return
+    a = m.Article(id=row[0], title=row[2])
+    a.save()
+
+    print row
+
+    # just in case we're running w/ DEBUG=True we don't want this process
+    # to gobble up all available memory :-)
+    if int(row[0]) % 1000 == 0:
+        reset_queries()
 

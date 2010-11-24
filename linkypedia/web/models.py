@@ -121,3 +121,8 @@ class Crawl(m.Model):
 
     class Meta:
         ordering = ['-started', '-finished']
+
+
+class Article(m.Model):
+    title = m.CharField(max_length=255, null=False)
+
