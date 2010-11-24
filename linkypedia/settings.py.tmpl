@@ -96,3 +96,14 @@ INSTALLED_APPS = (
 
 CRAWL_CUTOFF = 0
 CACHE_TTL_SECS = 60
+
+# celery config
+
+BROKER_HOST = "localhost"
+BROKER_PORT = 5672
+BROKER_USER = "linkypedia"
+BROKER_PASSWORD = "linkypedia"
+BROKER_VHOST = "linkypedia"
+
+import djcelery
+djcelery.setup_loader()
