@@ -1,4 +1,5 @@
 import re
+import codecs
 import urlparse
 
 from django.db import reset_queries
@@ -27,7 +28,7 @@ def load_links_dump(filename):
 
 
 def parse_sql(filename, pattern, func):
-    fh = open(filename)
+    fh = codecs.open(filename, encoding="utf-8")
 
     line = ""
     while True:
