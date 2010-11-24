@@ -7,5 +7,6 @@ def get_external_links(page):
     logger = get_external_links.get_logger()
     logger.info("fetching extlinks for: %s" % page)
     links = extlinks(page)
+    # TODO: persist the links somewhere :-)
     logger.info("got: %s" % links)
     return page
