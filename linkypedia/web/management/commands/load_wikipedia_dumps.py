@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = "Load in pages and externallinks dump files from wikipedia"
 
     def handle(self, pages_filename, links_filename, **options):
-        load_pages_dump(pages_filename)
+        #load_pages_dump(pages_filename)
         load_links_dump(links_filename)
 
 
@@ -50,7 +50,14 @@ def process_externallink_row(row):
     page_id, url, reversed_url = row
     parts = urlparse.urlparse(url)
     host = parts.netloc
-    print host
+
+    try:
+        article = m.Article.objects.get(id=page_id)
+        link = m.ExternalLink(article=article, url=url, host=host)
+        link.save()
+        print link
+    except m.Article.DoesNotExist:
+        pass
 
     
 def process_page_row(row):

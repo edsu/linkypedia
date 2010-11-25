@@ -126,3 +126,12 @@ class Crawl(m.Model):
 class Article(m.Model):
     title = m.CharField(max_length=255, null=False)
 
+
+class ExternalLink(m.Model):
+    article = m.ForeignKey(Article, related_name='links')
+    url = m.TextField(null=False)
+    host = m.CharField(max_length=255, null=False)
+
+    def __unicode__(self):
+        return u"%s -> %s" % (self.article.id, self.url)
+
