@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = "Load in pages and externallinks dump files from wikipedia"
 
     def handle(self, pages_filename, links_filename, **options):
-        #load_pages_dump(pages_filename)
+        load_pages_dump(pages_filename)
         load_links_dump(links_filename)
 
 
@@ -50,16 +50,24 @@ def process_externallink_row(row):
     page_id, url, reversed_url = row
     parts = urlparse.urlparse(url)
     host = parts.netloc
+    tld = host.split('.')[-1]
 
     try:
         article = m.Article.objects.get(id=page_id)
-        link = m.ExternalLink(article=article, url=url, host=host)
+        link = m.ExternalLink(article=article, url=url, host=host, tld=tld)
+        link.clean()
         link.save()
-        print link
+
+        # when DEBUG=True we don't want to gobble up all the memory
+        if link.id % 1000 == 0:
+            reset_queries()
+
+        print "created: %s" % link
     except m.Article.DoesNotExist:
+        # this ok since we ignore links from non articles: user pages, etc
         pass
 
-    
+
 def process_page_row(row):
     # ignore non-article pages
     if row[1] != '0':
@@ -67,10 +75,8 @@ def process_page_row(row):
     a = m.Article(id=row[0], title=row[2])
     a.save()
 
-    print row
-
-    # just in case we're running w/ DEBUG=True we don't want this process
-    # to gobble up all available memory :-)
+    # when DEBUG=True we don't want to gobble up all the memory
     if int(row[0]) % 1000 == 0:
         reset_queries()
 
+    print "created: %s" % a
