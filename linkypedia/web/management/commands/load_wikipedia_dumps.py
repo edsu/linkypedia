@@ -73,10 +73,13 @@ def process_page_row(row):
     if row[1] != '0':
         return
     a = m.Article(id=row[0], title=row[2])
-    a.save()
+    try:
+        a.save()
+        print "created: %s" % a
+    except Exception, e:
+        print "error while processing %s: %s" % (row, e)
 
     # when DEBUG=True we don't want to gobble up all the memory
     if int(row[0]) % 1000 == 0:
         reset_queries()
 
-    print "created: %s" % a
