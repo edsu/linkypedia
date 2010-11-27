@@ -31,6 +31,7 @@ def parse_sql(filename, pattern, func):
     fh = codecs.open(filename, encoding="utf-8")
 
     line = ""
+    count = 0
     while True:
         buff = fh.read(1024)
         if not buff:
@@ -40,10 +41,18 @@ def parse_sql(filename, pattern, func):
 
         rows = list(re.finditer(pattern, line))
         for row in rows:
-            func(row.groups())
+            try:
+                func(row.groups())
+            except Exception, e:
+                print "uhoh: %s" % e
 
         if len(rows) > 0:
             line = line[rows[-1].end():]
+
+        # when DEBUG=True we don't want to gobble up all the memory
+        count += 1
+        if count % 1000 == 0:
+            reset_queries()
 
 
 def process_externallink_row(row):
@@ -57,12 +66,8 @@ def process_externallink_row(row):
         link = m.ExternalLink(article=article, url=url, host=host, tld=tld)
         link.clean()
         link.save()
-
-        # when DEBUG=True we don't want to gobble up all the memory
-        if link.id % 1000 == 0:
-            reset_queries()
-
         print "created: %s" % link
+
     except m.Article.DoesNotExist:
         # this ok since we ignore links from non articles: user pages, etc
         pass
@@ -73,13 +78,5 @@ def process_page_row(row):
     if row[1] != '0':
         return
     a = m.Article(id=row[0], title=row[2])
-    try:
-        a.save()
-        print "created: %s" % a
-    except Exception, e:
-        print "error while processing %s: %s" % (row, e)
-
-    # when DEBUG=True we don't want to gobble up all the memory
-    if int(row[0]) % 1000 == 0:
-        reset_queries()
-
+    a.save()
+    print "created: %s" % a
