@@ -55,7 +55,7 @@ website. <a href="{% url website_pages_feed website.id %}">
     {% for wikipedia_page in wikipedia_pages %}
     <tr class="{% cycle 'odd' 'even' %}">
         <td class="wikipedia_page">
-            <a href="{{ wikipedia_page.url }}">
+            <a href="{% url page wikipedia_page.title|urlencode %}">
                 {{ wikipedia_page.title }}
             </a>
         </td>

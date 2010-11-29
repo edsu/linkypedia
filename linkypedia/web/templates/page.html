@@ -1,0 +1,28 @@
+{% extends "website.html" %}
+{% load humanize %}
+
+{% block extra_head %}<title>linkypedia | page {{ title }}</title>{% endblock %}
+{% block content %}
+
+<div id="title"><a href="{{ wikipedia_page.url }}">{{ title }}</a></div>
+
+<p>
+    Where Wikipedia links to for '{{ title }}'.
+</p>
+
+{% if links %}
+<table id='link_summary'>
+    <tr>
+        <th width='40%'>site</th>
+        <th>link</th>
+    </tr>
+    {% for link in links %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td><a href="{% url website_summary link.website.id %}">{{ link.website.name }}</a></td>
+        <td><a href="{{ link.target }}">{{ link.target }}</a></td>
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+{% endblock %}

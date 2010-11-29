@@ -30,7 +30,9 @@ urlpatterns = patterns(
 
     url(r'^websites/(?P<website_id>\d+)/users/$', 'website_users', 
         name='website_users'),
-
+        
+    url(r'^page/(?P<title>.+)/$', 'page', name='page'),
+    
     url(r'^about/$', 'about', name='about'),
 
     url(r'^lookup/$', 'lookup', name='lookup'),
