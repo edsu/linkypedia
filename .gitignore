@@ -2,3 +2,4 @@
 linkypedia.db
 *.log
 linkypedia/settings.py
+*.tmproj

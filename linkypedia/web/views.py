@@ -1,8 +1,8 @@
+import cStringIO
+import datetime
 import json
 import urllib2
-import datetime
 import urlparse
-import cStringIO
 
 from lxml import etree
 
@@ -17,6 +17,15 @@ from linkypedia.web import models as m
 from linkypedia.rfc3339 import rfc3339
 from linkypedia.paginator import DiggPaginator
 from linkypedia.settings import CRAWL_CUTOFF, CACHE_TTL_SECS
+
+def exclude_internal(qs):
+    """Exclude wikipedia 'internal' pages"""
+    qs = qs.exclude(title__startswith='User')
+    qs = qs.exclude(title__startswith='Wikipedia')
+    qs = qs.exclude(title__startswith='Talk:')
+    qs = qs.exclude(title__startswith='Template talk:')
+    qs = qs.exclude(title__startswith='File:')
+    return qs
 
 def about(request):
     return render_to_response('about.html')
@@ -76,6 +85,7 @@ def website_pages(request, website_id):
         sort_order = '-links__count'
 
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
+    wikipedia_pages = exclude_internal(wikipedia_pages)
     wikipedia_pages = wikipedia_pages.annotate(Count('links'))
     wikipedia_pages = wikipedia_pages.order_by(sort_order)
     wikipedia_pages = wikipedia_pages.distinct()
@@ -173,3 +183,9 @@ def status(request):
         update['current_crawl'] = crawl
 
     return HttpResponse(json.dumps(update, indent=2), mimetype='application/json')
+
+def page(request, title):
+    wikipedia_page = m.WikipediaPage.objects.get(title=title)
+    links = m.Link.objects.filter(wikipedia_page=wikipedia_page)
+    links = links.order_by('website__name')
+    return render_to_response('page.html', dictionary=locals())
