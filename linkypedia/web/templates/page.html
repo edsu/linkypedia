@@ -2,27 +2,31 @@
 {% load humanize %}
 
 {% block extra_head %}<title>linkypedia | page {{ title }}</title>{% endblock %}
-{% block content %}
 
-<div id="title"><a href="{{ wikipedia_page.url }}">{{ title }}</a></div>
+{% block tab_summary %}
+Where the Wikipedia article <a href="http://wikipedia.org/wiki/{{title}}">{{ title }}</a> links to.
+<br />
+This list only includes websites that Linkypedia is currently monitoring. So,
+it's not exhaustive...
+{% endblock %}
 
-<p>
-    Where Wikipedia links to for '{{ title }}'.
-</p>
-
-{% if links %}
-<table id='link_summary'>
+{% block tab_content %}
+<table id='page_summary'>
     <tr>
-        <th width='40%'>site</th>
+        <th>site</th>
         <th>link</th>
     </tr>
     {% for link in links %}
     <tr class="{% cycle 'odd' 'even' %}">
-        <td><a href="{% url website_summary link.website.id %}">{{ link.website.name }}</a></td>
-        <td><a href="{{ link.target }}">{{ link.target }}</a></td>
+        <td>
+            <a href="{% url website_summary link.website.id %}">
+            {% if link.website.favicon_url %}
+            <img src="{{ link.website.favicon_url }}" class="favicon" title="{{ link.website.name }}" />
+            {% endif %}
+            </a>
+        </td>
+        <td style="word-wrap: break-word;"><a href="{{ link.target }}">{{ link.target }}</a></td>
     </tr>
     {% endfor %}
 </table>
-{% endif %}
-
 {% endblock %}

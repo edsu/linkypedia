@@ -255,3 +255,8 @@ img.feed_icon {
     height: 17px; 
     vertical-align: middle;
 }
+
+table#page_summary {
+    text-align: left;
+    width: 100%;
+}

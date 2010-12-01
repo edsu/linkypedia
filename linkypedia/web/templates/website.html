@@ -8,6 +8,7 @@
 <div id="tab_pane">
 
 <div id="tabs">
+    {% if website %}
     <span class="{% if tab == "summary" %}active_tab{% else %}inactive_tab{% endif %}">
         <a href="{% url website_summary website.id %}">summary</a>
     </span>
@@ -20,6 +21,7 @@
     <span class="{% if tab == "users" %}active_tab{% else %}inactive_tab{% endif %}">
         <a href="{% url website_users website.id %}">users</a>
     </span>
+    {% endif %}
 </div>
 
 <div id="tab_summary">
