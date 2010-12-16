@@ -19,37 +19,38 @@ from web import tasks
 RETRIES_BETWEEN_API_ERRORS = 5
 IRC_MESSAGE_PATTERN = re.compile('\[\[(.+?)\]\] (.+)? (http:.+?)? (?:\* (.+?) \*)? (?:\(([+-]\d+)\))? (.+)?')
 
+log = logging.getLogger()
 
 class WikipediaUpdatesClient(irclib.SimpleIRCClient):
     """Fetch live update feed from irc://irc.wikimedia.org/en.wikipedia
     """
 
     def on_error(self, connection, event):
-        print event
+        log.error("encountered an irc error: %s" % event)
 
     def on_created(self, connection, event):
+        log.info("joining #en.wikipedia")
         connection.join("#en.wikipedia")
 
     def on_pubmsg(self, connection, event):
         msg = self._strip_color(event.arguments()[0])
+        msg = msg.decode("utf-8")
+        log.debug(msg)
         match = IRC_MESSAGE_PATTERN.search(msg)
         if match:
-            # todo: add message to queue
             page, status, diff_url, user, bytes_changed, msg = match.groups()
-            print "page: %s" % page
-            print "status: %s" % status
-            print "diff: %s" % diff_url
-            print "user: %s" % user
-            print "bytes: %s" % bytes_changed
-            print "msg: %s" % msg
-            print 
+
             # ignore what look like non-articles
             if ':' not in page:
+                # add the page to the external link celery queue
                 result = tasks.get_external_links.delay(page)
-                result.get()
+                # wait till we get the response
+                page_id, created, deleted = result.get()
+                log.info("%s (%s) links created=%s, links deleted=%s" % 
+                        (page, page_id, created, deleted))
         else:
             # should never happen
-            print "NO MATCH: %s" % msg
+            log.fatal("irc message didn't match regex: %s" % msg)
             connection.close()
             sys.exit(-1)
 
@@ -78,7 +79,7 @@ def info(title):
     logging.info("wikipedia lookup for page: %s " % title)
     q = {'action': 'query', 
          'prop': 'info', 
-         'titles': title.encode('utf-8'),
+         'titles': title,
          }
     return _first(_api(q))
 
@@ -87,7 +88,7 @@ def categories(title):
     logging.info("wkipedia look up for page categories: %s" % title)
     q = {'action': 'query',
          'prop': 'categories',
-         'titles': title.encode('utf-8'),
+         'titles': title,
          }
     try:
         return _first(_api(q))['categories']
@@ -108,6 +109,13 @@ def users(usernames):
 
 
 def extlinks(page_title, limit=100, offset=0):
+    """returns a dictionary of information about external links for a 
+    wikipedia page with a given title. The dictionary should include keys for
+    page_id, namespace_id and urls. The page_id is the id for the wikipedia
+    page, the namespace_id typically 0 for wikipedia articles), and urls is a 
+    list of urls that the particular wikipedia page links to outside of 
+    wikipedia.
+    """
     page_title = page_title.replace(' ', '_')
     q = {'action': 'query',
          'prop': 'extlinks',
@@ -115,20 +123,21 @@ def extlinks(page_title, limit=100, offset=0):
          'ellimit': limit,
          'eloffset': offset,
         }
-    links = _first(_api(q))
+    response = _first(_api(q))
 
-    if links.has_key('extlinks'):
+    if response.has_key('extlinks'):
         # strip out just the urls from the json response
-        links = [l[u"*"] for l in links['extlinks']]
+        urls = [l[u"*"] for l in response['extlinks']]
     else:
         # no links
-        links = []
+        urls = []
 
     # get more if it looks like we might not have gotten them all
-    if len(links) == limit:
-        links.extend(extlinks(page_title, limit, offset + limit))
+    if len(urls) == limit:
+        urls.extend(extlinks(page_title, limit, offset + limit))
 
-    return links
+    return {'page_id': response['pageid'], 'namespace_id': response['ns'], 
+            'urls': urls}
 
 
 def links(site, lang='en', page_size=500, offset=0):
@@ -176,7 +185,15 @@ def _first(data):
 
 def _fetch(url, params=None, retries=RETRIES_BETWEEN_API_ERRORS):
     if params:
-        req = urllib2.Request(url, data=urllib.urlencode(params))
+        # not sure why urlencode doesn't handle encoding as utf-8... 
+        utf8_params = {}
+        for k, v in params.items():
+            if type(v) == unicode:
+                utf8_params[k] = v.encode('utf-8')
+            else:
+                utf8_params[k] = v
+
+        req = urllib2.Request(url, data=urllib.urlencode(utf8_params))
         req.add_header('Content-type', 'application/x-www-form-urlencoded; charset=UTF-8')
     else:
         req = urllib2.Request(url)
@@ -198,7 +215,7 @@ def _fetch_again(e, url, params, retries):
             raise e
         else: 
             # should back off 10, 20, 30, 40, 50 seconds
-            sleep_seconds = (retries_between_api_errors - retries) * 10
+            sleep_seconds = (RETRIES_BETWEEN_API_ERRORS - retries) * 10
             logging.info("sleeping %i seconds then trying again %i times" %
                     (sleep_seconds, retries))
             time.sleep(sleep_seconds)

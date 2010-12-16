@@ -17,7 +17,7 @@ class Command(BaseCommand):
         load_links_dump(links_filename)
 
 
-def load_pages_dump(filename): #(10,0,'AccessibleComputing','',0,1,0,0.33167112649574,'20100727152717',133452289,57)
+def load_pages_dump(filename): 
     pattern = r"\((\d+),(\d+),'(.+?)','.*?',\d+,\d+,\d+,\d\.\d+,'.+?',\d+,\d+\)"
     parse_sql(filename, pattern, process_page_row)
 
@@ -57,14 +57,10 @@ def parse_sql(filename, pattern, func):
 
 def process_externallink_row(row):
     page_id, url, reversed_url = row
-    parts = urlparse.urlparse(url)
-    host = parts.netloc
-    tld = host.split('.')[-1]
 
     try:
         article = m.Article.objects.get(id=page_id)
-        link = m.ExternalLink(article=article, url=url, host=host, tld=tld)
-        link.clean()
+        link = m.ExternalLink(article=article, url=url)
         link.save()
         print "created: %s" % link
 

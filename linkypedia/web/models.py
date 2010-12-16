@@ -130,6 +130,34 @@ class Article(m.Model):
         if len(self.title) > 255:
             self.title = self.title[0:255]
 
+    def update_links(self, urls):
+        """"takes a list of urls that are the current set of external links
+        for the given Wikipedia article, and updates the ExternaLinks
+        appropriately.
+        """
+        # create two sets of urls to do the logic
+        current_urls = set(urls)
+        old_urls = set([l.url for l in self.links.all()])
+
+        created = deleted = 0
+
+        # create any new links
+        for url in current_urls - old_urls:
+            ExternalLink.objects.create(article=self, url=url)
+            created += 1
+
+        # delete any links that have been removed
+        for url in old_urls - current_urls:
+            try:
+                link = ExternalLink.objects.get(article=self, url=url)
+                link.delete()
+                deleted += 1
+            except ExternalLink.DoesNotExist:
+                # might not be in there, but that's ok since we want to delete
+                pass
+
+        return created, deleted
+
     def __unicode__(self):
         return u"%s (%s)" % (self.title, self.id)
 
@@ -139,6 +167,14 @@ class ExternalLink(m.Model):
     url = m.TextField(null=False)
     host = m.CharField(max_length=255, null=False)
     tld = m.CharField(max_length=25, null=False)
+    created = m.DateTimeField(auto_now_add=True, null=False)
+
+    def save(self, *args, **kwargs):
+        # update host and tld based on the url
+        parts = urlparse.urlparse(self.url)
+        self.host = parts.netloc
+        self.tld = self.host.split('.')[-1]
+        super(ExternalLink, self).save(*args, **kwargs)
 
     def clean(self):
         if len(self.tld) > 25:
@@ -148,3 +184,6 @@ class ExternalLink(m.Model):
 
     def __unicode__(self):
         return u"%s -> %s" % (self.article.id, self.url)
+
+    class Meta:
+        ordering = ['-created']
