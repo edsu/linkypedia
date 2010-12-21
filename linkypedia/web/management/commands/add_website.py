@@ -5,9 +5,8 @@ import cStringIO
 from django.core.management.base import BaseCommand
 from lxml import etree
 
-from linkypedia.crawl import crawl
-from linkypedia.wikipedia import _fetch
 from linkypedia.web import models as m
+from linkypedia.wikipedia.api import _fetch
 
 class Command(BaseCommand):
 

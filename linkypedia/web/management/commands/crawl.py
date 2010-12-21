@@ -5,7 +5,7 @@ import urlparse
 
 from django.core.management.base import BaseCommand
 
-from linkypedia.crawl import crawl
+from linkypedia.wikipedia.crawl import crawl
 from linkypedia.web import models as m
 
 logging.basicConfig(

@@ -10,9 +10,9 @@ import datetime
 from django.db import reset_queries
 
 from linkypedia.web import models as m
-from linkypedia import wikipedia
-from linkypedia.settings import CRAWL_CUTOFF
 from linkypedia.rfc3339 import rfc3339_parse
+from linkypedia.settings import CRAWL_CUTOFF
+from linkypedia.wikipedia.api import links, users
 
 def crawl(website):
     """
@@ -26,7 +26,7 @@ def crawl(website):
 
     # look at all wikipedia pages that reference a particular website
     count = 0
-    for source, target in wikipedia.links(website.url):
+    for source, target in links(website.url):
 
         # get the wikipedia page
         page, created = m.WikipediaPage.new_from_wikipedia(url=source)
@@ -106,7 +106,7 @@ def _user_pages():
 def _wikipedia_users(user_pages):
     username_page_map = dict([[p.associated_username(), p] for p in user_pages])
     usernames = username_page_map.keys()
-    for info in wikipedia.users(usernames):
+    for info in users(usernames):
         info['page'] = username_page_map[info['name']]
         yield info
 

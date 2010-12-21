@@ -6,8 +6,8 @@ import urlparse
 from django.db import models as m
 from django.db.models import Count
 
-from linkypedia import wikipedia
 from linkypedia.rfc3339 import rfc3339_parse
+from linkypedia.wikipedia import api
 
 
 class WikipediaCategory(m.Model):
@@ -30,13 +30,13 @@ class WikipediaPage(m.Model):
         if wikipedia_pages.count() > 0:
             return wikipedia_pages[0], False
 
-        title_escaped = wikipedia.url_to_title(url)
-        info = wikipedia.info(title_escaped)
+        title_escaped = api.url_to_title(url)
+        info = api.info(title_escaped)
 
         wikipedia_page = WikipediaPage.objects.create(title=info['title'],
             url=url, last_modified=rfc3339_parse(info['touched']))
 
-        for cat in wikipedia.categories(wikipedia_page.title):
+        for cat in api.categories(wikipedia_page.title):
             title = cat['title'][9:]
             if not title:
                 continue

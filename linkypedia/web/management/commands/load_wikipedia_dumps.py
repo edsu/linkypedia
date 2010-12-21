@@ -5,7 +5,6 @@ import urlparse
 from django.db import reset_queries
 from django.core.management.base import BaseCommand
 
-from linkypedia import wikipedia
 from linkypedia.web import models as m
 
 

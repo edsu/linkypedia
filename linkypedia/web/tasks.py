@@ -1,5 +1,8 @@
 from celery.decorators import task
 
+from linkypedia.web import models as m
+from linkypedia.wikipedia.api import extlinks, info
+
 
 @task
 def get_external_links(page):
@@ -7,10 +10,6 @@ def get_external_links(page):
     updates the database, and returns counts of links created and links
     deleted.
     """
-    # TODO: remove circular dependencies :-(
-    from linkypedia.wikipedia import extlinks, info
-    from linkypedia.web import models as m
-
     logger = get_external_links.get_logger()
     logger.debug("fetching extlinks for: %s" % page)
     links = extlinks(page)

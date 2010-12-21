@@ -2,7 +2,7 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from linkypedia import crawl
+from linkypedia.wikipedia import crawl
 
 logging.basicConfig(
         filename="load_users.log", 

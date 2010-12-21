@@ -2,11 +2,11 @@ import logging
 
 from django.core.management.base import BaseCommand
 
-from linkypedia.wikipedia import start_update_stream
+from linkypedia.wikipedia.irc import start_update_stream
 
 logging.basicConfig(
         filename="updates.log", 
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="%(asctime)s - %(levelname)s - %(message)s")
 
 log = logging.getLogger()

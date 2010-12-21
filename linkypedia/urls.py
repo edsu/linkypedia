@@ -4,8 +4,10 @@ from django.views.static import serve
 urlpatterns = patterns(
     'linkypedia.web.views',
 
-    url(r'^$', 'websites', name='websites'),
-    url(r'^feed/$', 'websites_feed', name='websites_feed'),
+    url(r'^$', 'home', name='home'),
+
+    url(r'^websites/$', 'websites', name='websites'),
+    url(r'^websites/feed/$', 'websites_feed', name='websites_feed'),
 
     url(r'^websites/(?P<website_id>\d+)/$', 'website_summary',
         name='website_summary'),

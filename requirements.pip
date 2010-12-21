@@ -5,3 +5,4 @@ MySQL-python
 BeautifulSoup
 lxml
 celery
+rfc3339
