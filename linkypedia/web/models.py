@@ -124,7 +124,12 @@ class Crawl(m.Model):
 
 
 class Article(m.Model):
+    language = "en" # TODO: allow more than one
     title = m.CharField(max_length=255, null=False)
+
+    @property
+    def url(self):
+        return "http://%s.wikipedia.org/wiki/%s" % (self.language, self.title)
 
     def clean(self):
         if len(self.title) > 255:
@@ -143,15 +148,18 @@ class Article(m.Model):
 
         # create any new links
         for url in current_urls - old_urls:
-            ExternalLink.objects.create(article=self, url=url)
-            created += 1
+            l, c = ExternalLink.objects.get_or_create(article=self, url=url)
+            if c:
+                created += 1
 
         # delete any links that have been removed
         for url in old_urls - current_urls:
             try:
-                link = ExternalLink.objects.get(article=self, url=url)
-                link.delete()
-                deleted += 1
+                # sometimes the same url can appear twice in the same article
+                # but we flatten these
+                for l in ExternalLink.objects.get(article=self, url=url):
+                    l.delete()
+                    deleted += 1
             except ExternalLink.DoesNotExist:
                 # might not be in there, but that's ok since we want to delete
                 pass

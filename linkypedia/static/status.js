@@ -4,10 +4,10 @@ $(document).ready(function() { setTimeout("get_last_update()", refresh_rate);});
 
 function get_last_update(since) {
     $.getJSON('/status.json', function(data) {
-        var html = '<b>recently found: </b>' +
+        var html = '<b>just added: </b>' +
                '<a href="' + data.wikipedia_url + '">' +
                data.wikipedia_page_title + '</a> referencing <a href="' + 
-               data.target + '">' + data.website_name + '</a>';
+               data.target + '">' + data.host + '</a>';
 
         if (since != data.created) {
             $('#last_link').fadeOut('slow', function() {
