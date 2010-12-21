@@ -1,4 +1,5 @@
 import re
+import gzip
 import codecs
 import urlparse
 
@@ -10,9 +11,10 @@ from linkypedia.web import models as m
 
 class Command(BaseCommand):
     help = "Load in pages and externallinks dump files from wikipedia"
+    args = "enwiki-latest-page.sql.gz enwiki-latest-externallinks.sql.gz"
 
     def handle(self, pages_filename, links_filename, **options):
-        load_pages_dump(pages_filename)
+        #load_pages_dump(pages_filename)
         load_links_dump(links_filename)
 
 
@@ -27,7 +29,10 @@ def load_links_dump(filename):
 
 
 def parse_sql(filename, pattern, func):
-    fh = codecs.open(filename, encoding="utf-8")
+    if filename.endswith('.gz'):
+        fh = codecs.EncodedFile(gzip.open(filename), data_encoding="utf-8")
+    else:
+        fh = codecs.open(filename, encoding="utf-8")
 
     line = ""
     count = 0
