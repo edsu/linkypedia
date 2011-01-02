@@ -80,7 +80,7 @@ class Article(m.Model):
             try:
                 # sometimes the same url can appear twice in the same article
                 # but we flatten these
-                for l in ExternalLink.objects.get(article=self, url=url):
+                for l in ExternalLink.objects.filter(article=self, url=url):
                     l.delete()
                     deleted += 1
             except ExternalLink.DoesNotExist:
@@ -116,5 +116,11 @@ class ExternalLink(m.Model):
     def __unicode__(self):
         return u"%s -> %s" % (self.article.id, self.url)
 
-    class Meta:
-        ordering = ['-created']
+
+class Hosts(m.Model):
+    host = m.CharField(max_length=255, primary_key=True)
+    links = m.IntegerField()
+
+class TLDS(m.Model):
+    tld = m.CharField(max_length=25, primary_key=True)
+    links = m.IntegerField()
