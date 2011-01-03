@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, **kwargs):
         if not os.path.isdir(settings.WIKIPEDIA_DUMPS_DIR):
-            sys.mkdir(settings.WIKIPEDIA_DUMPS_DIR)
+            os.mkdir(settings.WIKIPEDIA_DUMPS_DIR)
 
         for lang in settings.WIKIPEDIA_LANGUAGES:
             fetch("http://dumps.wikimedia.org/%swiki/latest/%swiki-latest-page.sql.gz" % (lang, lang))
