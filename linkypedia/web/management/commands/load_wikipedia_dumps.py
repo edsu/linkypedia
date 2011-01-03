@@ -1,8 +1,10 @@
+import os
 import re
 import gzip
 import codecs
 import urlparse
 
+from django.conf import settings
 from django.db import reset_queries
 from django.core.management.base import BaseCommand
 
@@ -11,24 +13,32 @@ from linkypedia.web import models as m
 
 class Command(BaseCommand):
     help = "Load in pages and externallinks dump files from wikipedia"
-    args = "enwiki-latest-page.sql.gz enwiki-latest-externallinks.sql.gz"
 
-    def handle(self, pages_filename, links_filename, **options):
-        #load_pages_dump(pages_filename)
-        load_links_dump(links_filename)
+    def handle(self, **options):
+        for lang in settings.WIKIPEDIA_LANGUAGES:
+            
+            # load pages
+            filename = "%swiki-latest-page.sql.gz" % lang
+            path = os.path.join(settings.WIKIPEDIA_DUMPS_DIR, filename)
+            load_pages_dump(path, lang)
+
+            # load links
+            filename = "%swiki-latest-externallinks.sql.gz" % lang
+            path = os.path.join(settings.WIKIPEDIA_DUMPS_DIR, filename)
+            load_links_dump(path, lang)
 
 
-def load_pages_dump(filename): 
+def load_pages_dump(filename, lang): 
     pattern = r"\((\d+),(\d+),'(.+?)','.*?',\d+,\d+,\d+,\d\.\d+,'.+?',\d+,\d+\)"
-    parse_sql(filename, pattern, process_page_row)
+    parse_sql(filename, pattern, process_page_row, lang)
 
 
-def load_links_dump(filename):
+def load_links_dump(filename, lang):
     pattern = r"\((\d+),'(.+?)','(.+?)'\)"
-    parse_sql(filename, pattern, process_externallink_row)
+    parse_sql(filename, pattern, process_externallink_row, lang)
 
 
-def parse_sql(filename, pattern, func):
+def parse_sql(filename, pattern, func, lang):
     if filename.endswith('.gz'):
         fh = codecs.EncodedFile(gzip.open(filename), data_encoding="utf-8")
     else:
@@ -46,7 +56,7 @@ def parse_sql(filename, pattern, func):
         rows = list(re.finditer(pattern, line))
         for row in rows:
             try:
-                func(row.groups())
+                func(row.groups(), lang)
             except Exception, e:
                 print "uhoh: %s" % e
 
@@ -59,8 +69,22 @@ def parse_sql(filename, pattern, func):
             reset_queries()
 
 
-def process_externallink_row(row):
+def process_page_row(row, lang):
+    # ignore non-article pages
+    if row[1] != '0':
+        return
+    # article id has language pre-prended to it
+    article_id = "%s:%s" % (lang, row[0])
+    a = m.Article(id=article_id, title=row[2])
+    a.save()
+    print "created: %s" % a
+
+
+def process_externallink_row(row, lang):
     page_id, url, reversed_url = row
+
+    # page id gets a language prefix
+    page_id = "%s:%s" % (lang, page_id)
 
     try:
         article = m.Article.objects.get(id=page_id)
@@ -71,12 +95,3 @@ def process_externallink_row(row):
     except m.Article.DoesNotExist:
         # this ok since we ignore links from non articles: user pages, etc
         pass
-
-
-def process_page_row(row):
-    # ignore non-article pages
-    if row[1] != '0':
-        return
-    a = m.Article(id=row[0], title=row[2])
-    a.save()
-    print "created: %s" % a

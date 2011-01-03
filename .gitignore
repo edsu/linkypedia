@@ -2,3 +2,5 @@
 linkypedia.db
 *.log
 linkypedia/settings.py
+dumps/*
+pip-log.txt

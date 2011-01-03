@@ -47,7 +47,7 @@ class Crawl(m.Model):
 
 
 class Article(m.Model):
-    language = "en" # TODO: allow more than one
+    id = m.CharField(max_length=12, primary_key=True)
     title = m.CharField(max_length=255, null=False)
 
     @property
@@ -96,31 +96,19 @@ class Article(m.Model):
 class ExternalLink(m.Model):
     article = m.ForeignKey(Article, related_name='links')
     url = m.TextField(null=False)
-    host = m.CharField(max_length=255, null=False)
-    tld = m.CharField(max_length=25, null=False)
     created = m.DateTimeField(auto_now_add=True, null=False)
-
-    def save(self, *args, **kwargs):
-        # update host and tld based on the url
-        parts = urlparse.urlparse(self.url)
-        self.host = parts.netloc
-        self.tld = self.host.split('.')[-1]
-        super(ExternalLink, self).save(*args, **kwargs)
-
-    def clean(self):
-        if len(self.tld) > 25:
-            self.tld = self.tld[0:25]
-        if len(self.host) > 255:
-            self.host = self.host[0:255]
 
     def __unicode__(self):
         return u"%s -> %s" % (self.article.id, self.url)
 
 
-class Hosts(m.Model):
-    host = m.CharField(max_length=255, primary_key=True)
-    links = m.IntegerField()
+class Host(m.Model):
+    name = m.CharField(max_length=255, primary_key=True)
+    tld = m.CharField(max_length=100, db_index=True)
+    urls = m.IntegerField()
+    lang = m.CharField(max_length=2)
 
-class TLDS(m.Model):
-    tld = m.CharField(max_length=25, primary_key=True)
-    links = m.IntegerField()
+
+class TLD(m.Model):
+    name = m.CharField(max_length=25, primary_key=True)
+    urls = m.IntegerField()

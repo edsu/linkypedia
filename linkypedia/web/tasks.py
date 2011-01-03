@@ -5,14 +5,14 @@ from linkypedia.wikipedia.api import extlinks, info
 
 
 @task
-def get_external_links(page):
+def get_external_links(page, lang):
     """given page title this task fetches external links from wikipedia
     updates the database, and returns counts of links created and links
     deleted.
     """
     logger = get_external_links.get_logger()
     logger.debug("fetching extlinks for: %s" % page)
-    links = extlinks(page)
+    links = extlinks(page, lang)
 
     article = article_id = None
     created = deleted = 0
@@ -22,9 +22,10 @@ def get_external_links(page):
         try:
             article = m.Article.objects.get(id=links['page_id'])
         except m.Article.DoesNotExist:
-            i = info(page)
-            article = m.Article.objects.create(id=i['pageid'], title=page)
-            logger.info(u"created article for %s" % page)
+            i = info(page, lang)
+            article_id = "%s:%s" % (self.lang, i['pageid']
+            article = m.Article.objects.create(id=article_id, title=page)
+            logger.info(u"created article for %s" % article_id)
         finally:
             if article:
                 created, deleted = article.update_links(links['urls'])

@@ -97,8 +97,11 @@ INSTALLED_APPS = (
 CRAWL_CUTOFF = 0
 CACHE_TTL_SECS = 60
 
-# celery config
+# wikipedia languages to load
+WIKIPEDIA_LANGUAGES = ("en", "de", "fr", "it", "pl", "ja", "es", "ru", "pt", "nl")
+WIKIPEDIA_DUMPS_DIR = os.path.join(os.path.dirname(__file__), "dumps")
 
+# celery config
 BROKER_HOST = "localhost"
 BROKER_PORT = 5672
 BROKER_USER = "linkypedia"

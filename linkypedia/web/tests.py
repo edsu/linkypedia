@@ -8,12 +8,12 @@ from linkypedia.web import models as m
 class WikipediaTest(TestCase):
 
     def test_info(self):
-        info = api.info('Pierre-Charles_Le_Sueur')
+        info = api.info('Pierre-Charles_Le_Sueur', 'en')
         self.assertEqual(info['pageid'], 842462)
         self.assertEqual(info['title'], 'Pierre-Charles Le Sueur')
 
     def test_extlinks(self):
-        extlinks = api.extlinks('BagIt')
+        extlinks = api.extlinks('BagIt', 'en')
         self.assertEqual(extlinks['page_id'], 29172924)
         self.assertEqual(extlinks['namespace_id'], 0)
         self.assertTrue(len(extlinks['urls']) > 10)
@@ -24,7 +24,7 @@ class LinkypediaTests(TestCase):
 
     def test_update_links(self):
         # set up an article with some links
-        article = m.Article(title="Linked_Data")
+        article = m.Article(id='en:1', title="Linked_Data")
         article.save()
 
         links = [
@@ -41,8 +41,6 @@ class LinkypediaTests(TestCase):
         l = article.links.all()[0]
         self.assertEqual(l.url,
                 "http://www.w3.org/DesignIssues/LinkedData.html")
-        self.assertEqual(l.tld, 'org')
-        self.assertEqual(l.host, 'www.w3.org')
         self.assertTrue(isinstance(l.created, datetime.datetime))
 
         # there ought to be four links now

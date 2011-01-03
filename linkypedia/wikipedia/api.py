@@ -27,40 +27,16 @@ def url_to_title(url):
         return None
 
 
-def info(title):
+def info(title, lang):
     logging.info("wikipedia lookup for page: %s " % title)
     q = {'action': 'query', 
          'prop': 'info', 
          'titles': title,
          }
-    return _first(_api(q))
+    return _first(_api(q, lang))
 
 
-def categories(title):
-    logging.info("wkipedia look up for page categories: %s" % title)
-    q = {'action': 'query',
-         'prop': 'categories',
-         'titles': title,
-         }
-    try:
-        return _first(_api(q))['categories']
-    except KeyError:
-        logging.error("uhoh, unable to find categories key!")
-        return []
-
-    
-def users(usernames):
-    usernames = [u.encode('utf-8') for u in usernames]
-    logging.info("wikipedia look up for users: %s" % usernames)
-    q = {'action': 'query',
-         'list': 'users',
-         'ususers': '|'.join(usernames),
-         'usprop': 'blockinfo|groups|editcount|registration|emailable|gender',
-        }
-    return _api(q)['query']['users']
-
-
-def extlinks(page_title, limit=100, offset=0):
+def extlinks(page_title, lang, limit=100, offset=0):
     """returns a dictionary of information about external links for a 
     wikipedia page with a given title. The dictionary should include keys for
     page_id, namespace_id and urls. The page_id is the id for the wikipedia
@@ -75,7 +51,7 @@ def extlinks(page_title, limit=100, offset=0):
          'ellimit': limit,
          'eloffset': offset,
         }
-    response = _first(_api(q))
+    response = _first(_api(q, lang))
 
     if response.has_key('extlinks'):
         # strip out just the urls from the json response
@@ -92,7 +68,7 @@ def extlinks(page_title, limit=100, offset=0):
             'urls': urls}
 
 
-def links(site, lang='en', page_size=500, offset=0):
+def links(site, lang, page_size=500, offset=0):
     """
     similar to extlinks but instead of using the wikipedia api
     to fetch external links for a particular wikipedia page, it 
@@ -121,9 +97,9 @@ def links(site, lang='en', page_size=500, offset=0):
 
 
 
-def _api(params):
+def _api(params, lang):
     params['format'] = 'json'
-    url = 'http://en.wikipedia.org/w/api.php'
+    url = 'http://%s.wikipedia.org/w/api.php' % lang
     response = _fetch(url, params)
     data = json.loads(response)
     return data
