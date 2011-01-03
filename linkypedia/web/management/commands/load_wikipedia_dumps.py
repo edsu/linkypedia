@@ -74,20 +74,20 @@ def process_page_row(row, lang):
     if row[1] != '0':
         return
     # article id has language pre-prended to it
-    article_id = "%s:%s" % (lang, row[0])
+    article_id = m.article_id(row[0], lang)
     a = m.Article(id=article_id, title=row[2])
     a.save()
-    print "created: %s" % a
+    print "created: %s" % a.id
 
 
 def process_externallink_row(row, lang):
     page_id, url, reversed_url = row
 
     # page id gets a language prefix
-    page_id = "%s:%s" % (lang, page_id)
+    article_id = m.article_id(page_id, lang)
 
     try:
-        article = m.Article.objects.get(id=page_id)
+        article = m.Article.objects.get(id=article_id)
         link = m.ExternalLink(article=article, url=url)
         link.save()
         print "created: %s" % link

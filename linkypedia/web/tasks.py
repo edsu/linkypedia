@@ -20,10 +20,11 @@ def get_external_links(page, lang):
     # we only track articles with links
     if links['namespace_id'] == 0 and len(links['urls']) > 0:
         try:
-            article = m.Article.objects.get(id=links['page_id'])
+            article_id = m.article_id(links['page_id'], self.lang)
+            article = m.Article.objects.get(id=article_id)
         except m.Article.DoesNotExist:
             i = info(page, lang)
-            article_id = "%s:%s" % (self.lang, i['pageid']
+            article_id = m.article_id(i['pageid'], self.lang)
             article = m.Article.objects.create(id=article_id, title=page)
             logger.info(u"created article for %s" % article_id)
         finally:

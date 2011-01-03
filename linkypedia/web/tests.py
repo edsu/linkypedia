@@ -68,3 +68,7 @@ class LinkypediaTests(TestCase):
 
         # and that the deleted one is gone
         self.assertTrue("http://esw.w3.org/LinkedData" not in new_links)
+
+    def test_article_id(self):
+        self.assertEqual(m.article_id(1, "en"), "en:0000000001")
+        self.assertEqual(m.article_id("1", "en"), "en:0000000001")

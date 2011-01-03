@@ -47,7 +47,7 @@ class Crawl(m.Model):
 
 
 class Article(m.Model):
-    id = m.CharField(max_length=12, primary_key=True)
+    id = m.CharField(max_length=13, primary_key=True)
     title = m.CharField(max_length=255, null=False)
 
     @property
@@ -112,3 +112,10 @@ class Host(m.Model):
 class TLD(m.Model):
     name = m.CharField(max_length=25, primary_key=True)
     urls = m.IntegerField()
+
+
+def article_id(id, lang):
+    """"helper to turn a numeric wikipedia article id and a language code into 
+    the ExternalLink id
+    """
+    return "%s:%010i" % (lang, int(id))
