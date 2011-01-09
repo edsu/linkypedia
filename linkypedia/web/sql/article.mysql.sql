@@ -1,0 +1,1 @@
+ALTER TABLE web_article ENGINE=MyISAM;
