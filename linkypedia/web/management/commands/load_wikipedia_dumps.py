@@ -86,9 +86,15 @@ def process_externallink_row(row, lang):
     # page id gets a language prefix
     article_id = m.article_id(page_id, lang)
 
+    # don't bother processing if the url doesn't have a host
+    url = urlparse.urlparse(url)
+    if not url.netloc:
+        return
+
     try:
         article = m.Article.objects.get(id=article_id)
-        link = m.ExternalLink(article=article, url=url)
+        host, created = m.Host.objects.get_or_create(name=url.netloc)
+        link = m.ExternalLink(article=article, url=url.geturl(), host=host)
         link.save()
         print "created: %s" % link
 

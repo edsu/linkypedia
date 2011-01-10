@@ -93,25 +93,24 @@ class Article(m.Model):
         return u"%s (%s)" % (self.title, self.id)
 
 
+class Host(m.Model):
+    name = m.CharField(max_length=255, primary_key=True)
+    tld = m.CharField(max_length=100, db_index=True)
+
+    def save(self, *args, **kwargs):
+        if not self.tld:
+            self.tld = host.split('.')[-1]
+        super(Host, self).save(*args, **kwargs)
+
+
 class ExternalLink(m.Model):
     article = m.ForeignKey(Article, related_name='links')
+    host = m.ForeignKey(Host, related_name='links')
     url = m.TextField(null=False)
     created = m.DateTimeField(auto_now_add=True, null=False)
 
     def __unicode__(self):
         return u"%s -> %s" % (self.article.id, self.url)
-
-
-class Host(m.Model):
-    name = m.CharField(max_length=255, primary_key=True)
-    tld = m.CharField(max_length=100, db_index=True)
-    urls = m.IntegerField()
-    lang = m.CharField(max_length=2)
-
-
-class TLD(m.Model):
-    name = m.CharField(max_length=25, primary_key=True)
-    urls = m.IntegerField()
 
 
 def article_id(id, lang):
