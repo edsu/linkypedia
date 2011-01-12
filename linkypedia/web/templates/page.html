@@ -3,6 +3,7 @@
 
 {% block extra_head %}
     <title>linkypedia | page {{ title }}</title>
+    <link rel="alternate" type="application/json" href="{{ json_url }}">
     <script type="text/javascript">
         var json_url = "{{ json_url }}";
         function add_wikipedia_info(data) {

@@ -211,6 +211,7 @@ def page_json(request, page_id):
     page['abstract'] = abstract(g, s)
     page['thumbnail'] = g.value(s, foaf['depiction'])
     page['thumbnail'] = g.value(s, dbpedia['thumbnail'])
+    page['links'] = [l.target for l in wikipedia_page.links.all()]
     return HttpResponse(json.dumps(page, indent=2), mimetype='application/json; charset=utf8')
 
 def abstract(g, s):
