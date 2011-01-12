@@ -260,3 +260,13 @@ table#page_summary {
     text-align: left;
     width: 100%;
 }
+
+.thumbnail {
+    float: left;
+    height: 100px;
+    margin-right: 5px;
+}
+
+span#abstract {
+    text-align: left;
+}

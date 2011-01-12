@@ -31,7 +31,8 @@ urlpatterns = patterns(
     url(r'^websites/(?P<website_id>\d+)/users/$', 'website_users', 
         name='website_users'),
         
-    url(r'^page/(?P<title>.+)/$', 'page', name='page'),
+    url(r'^page/(?P<page_id>\d+)/$', 'page', name='page'),
+    url(r'^page/(?P<page_id>\d+)\.json$', 'page_json', name='page_json'),
     
     url(r'^about/$', 'about', name='about'),
 

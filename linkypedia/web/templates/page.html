@@ -1,13 +1,38 @@
 {% extends "website.html" %}
 {% load humanize %}
 
-{% block extra_head %}<title>linkypedia | page {{ title }}</title>{% endblock %}
+{% block extra_head %}
+    <title>linkypedia | page {{ title }}</title>
+    <script type="text/javascript">
+        var json_url = "{{ json_url }}";
+        function add_wikipedia_info(data) {
+            if (! data.abstract) return;
+            $("#wikipedia_article").hide();
+            $("#abstract").html(data.abstract);
+            if (data.thumbnail != null) {
+                img = '<a href="' + data.wikipedia_url + '"><img class="thumbnail" src="' + data.thumbnail + '"></a>';
+                $("#thumbnail").html(img);
+            }
+            $("#wikipedia_article").fadeIn();
+        }
+        $(document).ready(function() {
+            $.getJSON(json_url, add_wikipedia_info);
+        });
+    </script>
+{% endblock %}
 
 {% block tab_summary %}
-Where the Wikipedia article <a href="http://wikipedia.org/wiki/{{title}}">{{ title }}</a> links to.
-<br />
-This list only includes websites that Linkypedia is currently monitoring. So,
-it's not exhaustive...
+
+<div id="wikipedia_article">
+    <h2><a href="{{ wikipedia_page.url|safe }}">{{ wikipedia_page.title }}</a></h2>
+    <table>
+        <tr>
+            <td><span id="thumbnail"></span></td>
+            <td><span id="abstract"></span></td>
+        </tr>
+    </table>
+</div>
+
 {% endblock %}
 
 {% block tab_content %}

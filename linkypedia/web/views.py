@@ -1,20 +1,23 @@
-import cStringIO
-import datetime
 import json
-import urllib2
+import urllib
+import datetime
 import urlparse
+import cStringIO
 
 from lxml import etree
+
+import rdflib
 
 from django.db.models import Count
 from django.template import RequestContext
 from django.core.paginator import Paginator
+from django.core.urlresolvers import reverse
+from django.views.decorators.cache import cache_page
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
-from django.views.decorators.cache import cache_page
 
-from linkypedia.web import models as m
 from linkypedia.rfc3339 import rfc3339
+from linkypedia.web import models as m
 from linkypedia.paginator import DiggPaginator
 from linkypedia.settings import CRAWL_CUTOFF, CACHE_TTL_SECS
 
@@ -184,8 +187,44 @@ def status(request):
 
     return HttpResponse(json.dumps(update, indent=2), mimetype='application/json')
 
-def page(request, title):
-    wikipedia_page = m.WikipediaPage.objects.get(title=title)
+def page(request, page_id):
+    wikipedia_page = get_object_or_404(m.WikipediaPage, id=page_id)
     links = m.Link.objects.filter(wikipedia_page=wikipedia_page)
     links = links.order_by('website__name')
+    json_url = reverse("page_json", args=(page_id,))
     return render_to_response('page.html', dictionary=locals())
+
+def page_json(request, page_id):
+    wikipedia_page = get_object_or_404(m.WikipediaPage, id=page_id)
+    t = urllib.quote(wikipedia_page.title.replace(' ', '_'))
+
+    g = rdflib.Graph()
+    rdf_url = 'http://dbpedia.org/data/%s' % t
+    g.parse(rdf_url)
+    dbpedia = rdflib.Namespace('http://dbpedia.org/ontology/')
+    foaf = rdflib.Namespace('http://xmlns.com/foaf/0.1/')
+
+    s = rdflib.URIRef('http://dbpedia.org/resource/%s' % t)
+    page = {}
+    page['dbpedia_url'] = rdf_url
+    page['wikipedia_url'] = wikipedia_page.url
+    page['abstract'] = abstract(g, s)
+    page['thumbnail'] = g.value(s, foaf['depiction'])
+    page['thumbnail'] = g.value(s, dbpedia['thumbnail'])
+    return HttpResponse(json.dumps(page, indent=2), mimetype='application/json; charset=utf8')
+
+def abstract(g, s):
+    dbpedia = rdflib.Namespace('http://dbpedia.org/ontology/')
+    text = None
+    for o in g.objects(s, rdflib.RDFS['comment']):
+        if type(o) == rdflib.Literal and o.language == 'en':
+            text = unicode(o)
+    for o in g.objects(s, dbpedia['abstract']):
+        if type(o) == rdflib.Literal and o.language == 'en':
+            text = unicode(o)
+    if text:
+        words = text.split(" ")
+        if len(words) > 100:
+            text = " ".join(words[0:100]) + " ..."
+    return text
+
