@@ -198,7 +198,7 @@ def _fetch_again(e, url, params, retries):
             raise e
         else: 
             # should back off 10, 20, 30, 40, 50 seconds
-            sleep_seconds = (retries_between_api_errors - retries) * 10
+            sleep_seconds = (RETRIES_BETWEEN_API_ERRORS - retries) * 10
             logging.info("sleeping %i seconds then trying again %i times" %
                     (sleep_seconds, retries))
             time.sleep(sleep_seconds)
