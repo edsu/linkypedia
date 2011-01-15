@@ -1,14 +1,13 @@
 import re
-import pipes
 import logging
 import urlparse
-import cStringIO
 
-from django.core.paginator import Paginator
-from django.db import connection
+import redis
+import MySQLdb
+import MySQLdb.cursors
+
+from django.conf import settings
 from django.core.management.base import BaseCommand
-
-from linkypedia.web import models as m
 
 
 logging.basicConfig(
@@ -20,68 +19,50 @@ log = logging.getLogger()
 
 
 class Command(BaseCommand):
-    help = "calculates and persists the top hosts and tlds from link data"
+    help = "builds redis db of top hosts and tlds"
 
     def handle(self, **options):
-        # create pipelines to get sorted lists of hosts and tlds 
-        # persisted to files
-        hosts = counter("/tmp/1")
-        tlds = counter("/tmp/2")
+        r = redis.Redis()
 
-        # iterate through all the urls from which we get the host and tld
-        # and send them off to the appropriate pipeline
-        for url in urls():
+        for url, article_id in links():
+            # TODO: extract as a function for calling from other places
+            # TODO: also add an inverse
+
+            # which wikipedia?
+            wikipedia = article_id.split(':')[0]
+
+            # what hostname?
             u = urlparse.urlparse(url)
             host = u.netloc
-
-            if not host:
+            if not host: # TODO: ignore if numeric IP?
                 continue
-            hosts.write(host.encode("utf-8")+"\n")
 
+            # what top level domain
             tld = host.split(".")[-1]
             tld = re.sub(r':\d+$', '', tld) # strip off port numbers
-            tlds.write(tld.encode("utf-8")+"\n")
 
-        # close out the pipelines
-        hosts.close()
-        tlds.close()
+            # increment relevant stuff in redis
+            r.zincrby('hosts', host, 1)
+            r.zincrby('tlds', tld, 1)
+            r.zincrby('wikipedia', wikipedia, 1)
+            r.zincrby('hosts:%s' % tld, host, 1)
+            r.incrby('links', 1)
+
+            # TODO: ever 100k or so trim the long tail to save on memory
+            # TODO: extract as a function as well
+            # r.zremrangebyscore('hosts', 0, 2)
+            # r.zremrangebyscore('tlds', 0, 2)
 
 
-def counter(filename):
-    """Returns a filehandle to write data through a 
-    sort | uniq -c | sort -rn pipeline
-    """
-    t = pipes.Template()
-    t.append("sort", "--")
-    t.append("uniq -c", "--")
-    t.append("sort -rn", "--")
-    out = cStringIO.StringIO()
-    f = t.open(filename, "w")
-    return f
+def links():
+    db = settings.DATABASES['default']
+    conn = MySQLdb.connect(db=db['NAME'],
+                           host=db['HOST'],
+                           user=db['USER'],
+                           passwd=db['PASSWORD'],
+                           cursorclass=MySQLdb.cursors.SSCursor)
+    curs = conn.cursor()
+    curs.execute("SELECT url, article_id FROM wikipedia_link")
 
-def urls():
-    """a generator that returns all the wikipedia external link urls
-    """
-    
-    # what follows is a bit weird looking, but using the id index to iterate 
-    # through all the externallink urls runs faster than using limit and 
-    # offset when the offset gets big
-    cursor = connection.cursor()
-
-    # get the highest external link id
-    cursor.execute("SELECT MAX(id) FROM web_externallink")
-    max_id = cursor.fetchone()[0]
-
-    limit = 1000
-    i = 0
-    while i < max_id: 
-        q = """
-            SELECT url
-            FROM web_externallink
-            WHERE id > %s
-            AND id <= %s 
-            """ % (i, i+limit)
-        cursor.execute(q)
-        for row in cursor.fetchall():
-            yield row[0]
-        i += limit
+    for row in curs:
+        yield row

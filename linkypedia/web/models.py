@@ -99,7 +99,7 @@ class Host(m.Model):
 
     def save(self, *args, **kwargs):
         if not self.tld:
-            self.tld = host.split('.')[-1]
+            self.tld = self.name.split('.')[-1]
         super(Host, self).save(*args, **kwargs)
 
 
@@ -113,8 +113,4 @@ class ExternalLink(m.Model):
         return u"%s -> %s" % (self.article.id, self.url)
 
 
-def article_id(id, lang):
-    """"helper to turn a numeric wikipedia article id and a language code into 
-    the ExternalLink id
-    """
-    return "%s:%010i" % (lang, int(id))
+
