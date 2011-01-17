@@ -22,7 +22,7 @@ class Command(BaseCommand):
             filename = "%swiki-latest-page.sql.gz" % lang
             log.info("loading articles from %s" % filename)
             path = os.path.join(settings.WIKIPEDIA_DUMPS_DIR, filename)
-            load_pages_dump(path, lang)
+            #load_pages_dump(path, lang)
 
         linkdb._add_article_primary_key()
 

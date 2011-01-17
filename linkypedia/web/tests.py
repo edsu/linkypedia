@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from linkypedia.wikipedia import api
 from linkypedia.web import models as m
+import linkdb
 
 class WikipediaTest(TestCase):
 
@@ -20,31 +21,25 @@ class WikipediaTest(TestCase):
         for link in extlinks['urls']:
             self.assertTrue(link.startswith('http'))
 
-class LinkypediaTests(TestCase):
+class LinkdbTests(TestCase):
 
     def test_update_links(self):
         # set up an article with some links
-        article = m.Article(id='en:1', title="Linked_Data")
-        article.save()
-
+        linkdb.init(reset_stats=False)
+        import time
+        time.sleep(3)
+        linkdb.add_article('en', 1, 'Linked_Data')
         links = [
                     "http://www.w3.org/DesignIssues/LinkedData.html",
                     "http://linkddata.org",
                     "http://esw.w3.org/LinkedData",
                     "http://richard.cyganiak.de/2007/10/lod/"
                 ]
-
-        for l in links:
-            m.ExternalLink.objects.create(url=l, article=article)
+        for url in links:
+            linkdb.add_link('en', 1, url)
        
-        # tld, host and created should be populated automatically
-        l = article.links.all()[0]
-        self.assertEqual(l.url,
-                "http://www.w3.org/DesignIssues/LinkedData.html")
-        self.assertTrue(isinstance(l.created, datetime.datetime))
-
         # there ought to be four links now
-        self.assertEqual(article.links.all().count(), 4)
+        self.assertEqual(len(linkdb.article_links('en', 1)), 4)
 
         # now update the links: add a couple new links and remove one
         links = [
@@ -54,15 +49,15 @@ class LinkypediaTests(TestCase):
                     "http://www.ted.com/talks/tim_berners_lee_on_the_next_web.html",
                     "http://blog.iandavis.com/2010/12/06/back-to-basics/",
                 ]
-        created, deleted = article.update_links(links)
+        created, deleted = linkdb.update_article_links('en', 1, links)
         self.assertEqual(created, 2)
         self.assertEqual(deleted, 1)
 
         # now there should be 5 links
-        self.assertEqual(article.links.all().count(), 5)
+        self.assertEqual(len(linkdb.article_links('en', 1)), 5)
 
         # make sure the new links are in there
-        new_links = [l.url for l in article.links.all()]
+        new_links = [l[0] for l in linkdb.article_links('en', 1)]
         for link in links:
             self.assertTrue(link in new_links)
 
@@ -70,5 +65,5 @@ class LinkypediaTests(TestCase):
         self.assertTrue("http://esw.w3.org/LinkedData" not in new_links)
 
     def test_article_id(self):
-        self.assertEqual(m.article_id(1, "en"), "en:0000000001")
-        self.assertEqual(m.article_id("1", "en"), "en:0000000001")
+        self.assertEqual(linkdb.make_article_id("en", 1), "en:0000000001")
+        self.assertEqual(linkdb.make_article_id("en", "1"), "en:0000000001")
