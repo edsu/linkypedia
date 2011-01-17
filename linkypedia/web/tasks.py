@@ -3,9 +3,11 @@ from celery.decorators import task
 from linkypedia.web import models as m
 from linkypedia.wikipedia.api import extlinks, info
 
+import linkdb
+
 
 @task
-def get_external_links(page, lang):
+def get_external_links(lang, page):
     """given page title this task fetches external links from wikipedia
     updates the database, and returns counts of links created and links
     deleted.

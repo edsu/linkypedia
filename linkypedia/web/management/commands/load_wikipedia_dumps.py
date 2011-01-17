@@ -16,19 +16,19 @@ class Command(BaseCommand):
 
     def handle(self, **options):
         log.info("starting wikipedia dump loading")
-        linkdb.init()
+        #linkdb.init()
+
+        #for lang in settings.WIKIPEDIA_LANGUAGES:
+        #    filename = "%swiki-latest-page.sql.gz" % lang
+        #    log.info("loading articles from %s" % filename)
+        #    path = os.path.join(settings.WIKIPEDIA_DUMPS_DIR, filename)
+        #    load_pages_dump(path, lang)
+
+        #linkdb._add_article_primary_key()
 
         for lang in settings.WIKIPEDIA_LANGUAGES:
-            filename = "%swiki-latest-page.sql.gz" % lang
-            log.info("loading articles from %s" % filename)
-            path = os.path.join(settings.WIKIPEDIA_DUMPS_DIR, filename)
-            #load_pages_dump(path, lang)
-
-        linkdb._add_article_primary_key()
-
-        for lang in settings.WIKIPEDIA_LANGUAGES:
-            log.info("loading links from %s" % filename)
             filename = "%swiki-latest-externallinks.sql.gz" % lang
+            log.info("loading links from %s" % filename)
             path = os.path.join(settings.WIKIPEDIA_DUMPS_DIR, filename)
             load_links_dump(path, lang)
 
@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
 
 def load_pages_dump(filename, lang): 
-    pattern = r"\((\d+),(\d+),'(.+?)','.*?',\d+,\d+,\d+,\d\.\d+,'.+?',\d+,\d+\)"
+    pattern = r"\((\d+),(\d+),'(.+?)','.*?',\d+,\d+,\d+,\d\.\d+,'.+?',\d+,\d+(?:,\d+)?\)"
     parse_sql(filename, pattern, process_page_row, lang)
 
 

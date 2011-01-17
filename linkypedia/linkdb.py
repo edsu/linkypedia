@@ -6,6 +6,7 @@ the hood: relational db for some things, redis for other things, etc
 """
 
 import re
+import json
 import urlparse
 
 import redis
@@ -43,6 +44,17 @@ def article_links_by_host(hostname, limit=25, offset=0):
     return cursor.fetchall()
 
 
+def host_stats(tld=None, limit=50, offset=0):
+    key = 'hosts:%s' % tld if tld else 'hosts'
+    hosts = stats.zrevrange(key, offset, offset+limit-1, True)
+    return [(h[0], int(h[1])) for h in hosts]
+
+
+def tld_stats(limit=50, offset=0):
+    tlds = stats.zrevrange('tlds', offset, offset+limit-1, True)
+    return [(t[0], int(t[1])) for t in tlds]
+
+
 def add_article(wp_lang, wp_article_id, title):
     """adds an article to the link database using the wikipedia language
     that the link came from, the wikipedia article id, and the title of the
@@ -64,11 +76,14 @@ def add_link(wp_lang, wp_article_id, url):
     # don't add links for things we don't know about already
     article_title = get_article_title(wp_lang, wp_article_id)
     if not article_title:
-        return
+        return 0
 
+    # if the url doesn't parse don't bother storing it
     host = _hostname(url)
-    article_id = make_article_id(wp_lang, wp_article_id)
+    if not host:
+        return 0
 
+    article_id = make_article_id(wp_lang, wp_article_id)
     sql = """
         INSERT INTO wikipedia_link (article_id, url, host, created)
         VALUES (%s, %s, %s, now());
@@ -76,6 +91,15 @@ def add_link(wp_lang, wp_article_id, url):
     cursor = connection.cursor()
     added = cursor.execute(sql, [article_id, url, host])
     _update_stats(article_id, url)
+
+    # keep track of the last link added for real-time status display
+    last_link = {
+            'url': url, 
+            'lang': wp_lang, 
+            'article_id': wp_article_id, 
+            'title': article_title}
+    stats['last_link'] = json.dumps(last_link)
+
     return added
 
 
@@ -114,8 +138,7 @@ def update_article_links(wp_lang, wp_article_id, urls):
     # create any new links
     created =  0
     for url in current_urls - old_urls:
-        add_link(wp_lang, wp_article_id, url)
-        created += 1
+        created += add_link(wp_lang, wp_article_id, url)
 
     # delete any links that have been removed
     deleted = 0
@@ -135,14 +158,14 @@ def init(reset_stats=True):
     cursor = connection.cursor()
     log.info("initializing link database!")
     log.info("creating mysql link tables")
-    #cursor.execute("DROP TABLE IF EXISTS wikipedia_article")
+    cursor.execute("DROP TABLE IF EXISTS wikipedia_article")
     cursor.execute("""
         CREATE TABLE wikipedia_article (
             id char(15),
             title varbinary(255)
         ) ENGINE=myisam CHARACTER SET utf8
         """)
-    #cursor.execute("DROP TABLE IF EXISTS wikipedia_link")
+    cursor.execute("DROP TABLE IF EXISTS wikipedia_link")
     cursor.execute("""
         CREATE TABLE wikipedia_link (
             article_id char(15),
@@ -158,7 +181,6 @@ def init(reset_stats=True):
 
 
 def _update_stats(article_id, url):
-    return
     # which wikipedia?
     wikipedia = article_id.split(':')[0]
 
@@ -178,7 +200,6 @@ def _update_stats(article_id, url):
 # category but that can't be helped for now ... ideas welcome :)
 
 def _add_article_primary_key():
-    return
     log.info("adding wikipedia_article primary key")
     sql = "ALTER TABLE wikipedia_article ADD PRIMARY KEY(id)"
     cursor = connection.cursor()

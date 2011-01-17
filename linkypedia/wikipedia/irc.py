@@ -37,7 +37,7 @@ class WikipediaUpdatesClient(irclib.SimpleIRCClient):
             # ignore what look like non-articles
             if ':' not in page:
                 # add the page to the external link celery queue
-                result = tasks.get_external_links.delay(page, lang)
+                result = tasks.get_external_links.delay(lang, page)
                 # wait till we get the response
                 page_id, created, deleted = result.get()
                 log.info("%s (%s) links created=%s, links deleted=%s" % 
