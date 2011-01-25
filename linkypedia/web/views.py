@@ -1,22 +1,38 @@
+import os
+import re
 import json
-import urllib
+import urllib2
 
+from django.conf import settings
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 
+from pygooglechart import PieChart3D
+
 from linkypedia import linkdb
-from linkypedia.rfc3339 import rfc3339
 from linkypedia.web import models as m
-from linkypedia.paginator import DiggPaginator
-from linkypedia.settings import CRAWL_CUTOFF, CACHE_TTL_SECS
+from linkypedia.settings import CACHE_TTL_SECS
 
 
 @cache_page(CACHE_TTL_SECS)
 def home(request):
-    host_stats = linkdb.host_stats()
+    host_stats = linkdb.host_stats(limit=50)
     return render_to_response('home.html', dictionary=locals(),
+            context_instance=RequestContext(request))
+
+@cache_page(CACHE_TTL_SECS)
+def host(request, host):
+    links = linkdb.article_links_by_host(host)
+    return render_to_response('host.html', dictionary=locals(),
+            context_instance=RequestContext(request))
+
+@cache_page(CACHE_TTL_SECS)
+def article(request, wp_lang, wp_article_id):
+    links = linkdb.article_links(wp_lang, wp_article_id)
+    article_title = linkdb.get_article_title(wp_lang, wp_article_id)
+    return render_to_response('article.html', dictionary=locals(),
             context_instance=RequestContext(request))
 
 def status(request):
@@ -34,8 +50,13 @@ def status(request):
 
 @cache_page(60*60)
 def host_favicon(request, host):
-    r = urllib.urlopen('http://%s/favicon.ico' % host)
-    return HttpResponse(r.read(), mimetype=r.headers["content-type"])
+    req = urllib2.Request("http://%s/favicon.ico" % host, headers={"User-Agent": "ozilla/5.0 (X11; U; Linux x86_64; en-US) AppleWebKit/534.13 (KHTML, like Gecko) Chrome/9.0.597.45 Safari/534.13"})
+    res = urllib2.urlopen(req)
+    if res.code == 200:
+        ico = res.read()
+    if (ico and re.match(r"[a-z]{5}", ico)) or not ico:
+        ico = open(os.path.join(settings.MEDIA_ROOT, "question.ico")).read()
+    return HttpResponse(ico, mimetype="image/x-icon")
 
 def robots(request):
     return render_to_response('robots.txt', mimetype='text/plain')

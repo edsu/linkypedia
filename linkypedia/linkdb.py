@@ -20,13 +20,19 @@ stats = redis.Redis()
 def article_links(wp_lang, wp_article_id):
     article_id = make_article_id(wp_lang, wp_article_id)
     sql = """
-        SELECT url, created 
+        SELECT host, url, created 
         FROM wikipedia_link
         WHERE article_id = %s
+        ORDER BY created DESC
         """
     cursor = connection.cursor()
     cursor.execute(sql, [article_id])
-    return cursor.fetchall()
+    results = []
+    for r in  cursor.fetchall():
+        results.append({"host": r[0], 
+                        "url": r[1],
+                        "created": r[2]})
+    return results
 
 
 def article_links_by_host(hostname, limit=25, offset=0):
@@ -35,13 +41,21 @@ def article_links_by_host(hostname, limit=25, offset=0):
         FROM wikipedia_link, wikipedia_article
         WHERE wikipedia_link.host = %s
         AND wikipedia_link.article_id = wikipedia_article.id
-        ORDER BY created
+        ORDER BY created DESC
         LIMIT %s 
         OFFSET %s
         """
     cursor = connection.cursor()
     cursor.execute(sql, [hostname, limit, offset])
-    return cursor.fetchall()
+    results = []
+    for r in cursor.fetchall():
+        lang, article_id = unpack_article_id(r[0])
+        results.append({'wp_lang': lang, 
+                        'wp_article_id': article_id, 
+                        'article_title': _clean_title(r[1]), 
+                        'url': r[2],
+                        'created': r[3]})
+    return results
 
 
 def host_stats(tld=None, limit=50, offset=0):
@@ -123,7 +137,7 @@ def get_article_title(wp_lang, wp_article_id):
     cursor.execute(sql, [article_id])
     row = cursor.fetchone()
     if row:
-        return row[0]
+        return _clean_title(row[0])
     return None
 
 
@@ -153,6 +167,10 @@ def make_article_id(wp_lang, wp_article_id):
     return "%s:%010i" % (wp_lang, int(wp_article_id))
 
 
+def unpack_article_id(article_id):
+    return article_id.split(":")
+
+
 def init(reset_stats=True):
     "initializes the link database!"
     cursor = connection.cursor()
@@ -178,6 +196,10 @@ def init(reset_stats=True):
         log.info("resetting redis")
         stats.flushall()
     log.info("finished initializing link database")
+
+
+def _clean_title(title):
+    return title.replace("_", " ").replace('\\', '')
 
 
 def _update_stats(article_id, url):
@@ -226,7 +248,7 @@ def _add_link_indexes():
     log.info("adding wikipedia_link_host index")
     sql = """
         ALTER TABLE wikipedia_link
-        ADD INDEX wikipedia_link_host (host)
+        ADD INDEX wikipedia_link_host (host, created)
         """
     cursor.execute(sql)
     log.info("finished adding wikipedia_link_host index")

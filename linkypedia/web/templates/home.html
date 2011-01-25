@@ -13,7 +13,10 @@
 
 <p>
 {% for host, links in host_stats %}
-<img width="15" src="{% url host_favicon host %}"> {{ host }} {{ links }} <br>
+<img width="15" src="{% url host_favicon host %}">
+<a href="{% url host host %}">{{ host }}</a> 
+{{ links|intcomma }} 
+<br>
 {% endfor %}
 
 {% endblock %}
