@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<h1>{{ article_title }}</h1>
+<p>
+
+<table>
+    <tr>
+        <th>Host</th>
+        <th>URL</th>
+        <th>Created</th>
+    </tr>
+
+    {% for link in links %}
+    <tr>
+        <td>
+            <a href="{% url host link.host %}">
+                <img width="15" src="{% url host_favicon link.host %}" title="{{ link.host }}">
+            </a>
+        </td>
+        <td>{{ link.url }}</td>
+        <td>{{ link.created }}</td>
+    </tr>
+    {% endfor %}
+
+</table>
+
+{% endblock %}

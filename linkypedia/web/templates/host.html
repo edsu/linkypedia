@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+
+
+<p>
+<h1><img src="{% url host_favicon host %}"> {{ host }}</h1>
+
+<table>
+    <tr>
+        <th>Language</th>
+        <th>Wikipedia Article</th>
+        <th>External Link URL</th>
+        <th>Created</th>
+    </tr>
+    {% for link in links %}
+    <tr>
+        <td>{{ link.wp_lang }}</td>
+        <td>
+            <a href="{% url article link.wp_lang, link.wp_article_id %}">
+                {{ link.article_title }}
+            </a>
+        </td>
+        <td>
+            {{ link.url }} 
+        </td>
+        <td>
+            {{ link.created }}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+
+{% endblock %}
