@@ -2,7 +2,7 @@ User-agent: *
 Crawl-delay: 10.0
 
 User-agent: Slurp
-Crawl-delay: 10.0
+Crawl-delay: 20.0
 
 User-agent: msnbot
-Crawl-delay: 10.0
+Crawl-delay: 20.0
