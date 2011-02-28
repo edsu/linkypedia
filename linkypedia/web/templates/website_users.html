@@ -19,6 +19,7 @@ who have contributed specific links to wikipedia articles.
         <th>Edit Count</th>
         <th>Emailable</th>
         <th>Groups</th>
+        <th>Feed</th>
     </tr>
     {% for user in users %}
     <tr class="{% cycle 'odd' 'even' %}">
@@ -44,6 +45,10 @@ who have contributed specific links to wikipedia articles.
             {% for group in user.groups.all %}
             <a href="http://en.wikipedia.org/wiki/Special:ListUsers/{{ group.name }}">{{ group.name }}</a>
             {% endfor %}
+        </td>
+        <td>
+            <a
+                href="http://en.wikipedia.org/w/index.php?title=Special:Contributions/ChrisMcAvoy&feed=atom&limit=50&target={{ user.username }}"><img class="feed_icon" src="/static/feed.png"></a>
         </td>
     </tr>
     {% endfor %}
