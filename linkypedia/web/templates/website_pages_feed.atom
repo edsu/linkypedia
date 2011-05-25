@@ -25,7 +25,7 @@
         <title>{{ wpage.title }}</title>
         <link rel="alternate" type="text/html" href="{{ wpage.url }}" />
         <id>info:linkypedia/websites/{{ website.id }}/pages/{{ wpage.id }}</id>
-        <updated>{{ wpage.last_modified|rfc3339 }}</updated>
+        <updated>{{ wpage.links__created__max|rfc3339 }}</updated>
         <summary type="xhtml">
             <div xmlns="http://www.w3.org/1999/xhtml">
                 Linkypedia just noticed at {{ wpage.last_modified }} GMT

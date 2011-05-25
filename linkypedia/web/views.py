@@ -117,7 +117,8 @@ def website_pages_feed(request, website_id, page_num=1):
     website = get_object_or_404(m.Website, id=website_id)
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
     wikipedia_pages = wikipedia_pages.annotate(Count('links'))
-    wikipedia_pages = wikipedia_pages.order_by('-last_modified')
+    wikipedia_pages = wikipedia_pages.annotate(Max('links__created'))
+    wikipedia_pages = wikipedia_pages.order_by('-links__created__max')
     wikipedia_pages = wikipedia_pages.distinct()
 
     feed_updated = datetime.datetime.now()
