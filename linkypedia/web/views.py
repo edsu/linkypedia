@@ -8,7 +8,7 @@ from lxml import etree
 
 import rdflib
 
-from django.db.models import Count
+from django.db.models import Count, Max
 from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
@@ -79,9 +79,9 @@ def website_pages(request, website_id):
     other_direction = 'asc' if direction == 'desc' else 'desc'
 
     if order == 'update' and direction =='asc':
-        sort_order = 'last_modified'
+        sort_order = 'links__created__max'
     elif order == 'update' and direction == 'desc':
-        sort_order = '-last_modified'
+        sort_order = '-links__created__max'
     elif order == 'links' and direction == 'asc':
         sort_order = 'links__count'
     else:
@@ -90,6 +90,7 @@ def website_pages(request, website_id):
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
     wikipedia_pages = exclude_internal(wikipedia_pages)
     wikipedia_pages = wikipedia_pages.annotate(Count('links'))
+    wikipedia_pages = wikipedia_pages.annotate(Max('links__created'))
     wikipedia_pages = wikipedia_pages.order_by(sort_order)
     wikipedia_pages = wikipedia_pages.distinct()
 

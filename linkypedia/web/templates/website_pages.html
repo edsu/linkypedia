@@ -46,10 +46,10 @@ website. <a href="{% url website_pages_feed website.id %}">
         <th>Wikipedia Page</th>
         {% if order == 'links' %}
         <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=links&amp;direction={{ other_direction }}">Links</a></th>
-        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction={{ direction }}">Last Update<br />at Wikipedia</a></th>
+        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction={{ direction }}">Last Update</a></th>
         {% else %}
         <th><a href="{% url website_pages website.id %}?page=1&amp;order=links&amp;direction={{ direction }}">Links</a></th>
-        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order={{ order }}&amp;direction={{ other_direction }}">Last Update<br />at Wikipedia</a></th>
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order={{ order }}&amp;direction={{ other_direction }}">Last Update</a></th>
         {% endif %}
     </tr>
     {% for wikipedia_page in wikipedia_pages %}
@@ -65,7 +65,7 @@ website. <a href="{% url website_pages_feed website.id %}">
             </a>
         </td>
         <td class="last_updated">
-            {{ wikipedia_page.last_modified|date:"Y-m-d h:m:s" }}
+            {{ wikipedia_page.links__created__max|date:"Y-m-d H:m:s T" }}
         </td>
     </tr>
     {% endfor %}

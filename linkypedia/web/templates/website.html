@@ -3,7 +3,9 @@
 {% block extra_head %}<title>linkypedia | {{ website.name }} ({{ website.url }})</title>{% endblock %}
 {% block content %}
 
-<div id="title">{{ title }}</div>
+{% if website %}
+<div id="title">website: <a href="{{ website.url }}">{{ website.name }}</a></div>
+{% endif %}
 
 <div id="tab_pane">
 
