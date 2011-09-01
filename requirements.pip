@@ -2,6 +2,7 @@ django
 django-celery
 python-irclib
 MySQL-python
-BeautifulSoup
+BeautifulSoup>=3.2.0
 lxml
 celery
+rdflib
