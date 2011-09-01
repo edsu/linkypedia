@@ -21,15 +21,6 @@ from linkypedia.web import models as m
 from linkypedia.paginator import DiggPaginator
 from linkypedia.settings import CRAWL_CUTOFF, CACHE_TTL_SECS
 
-def exclude_internal(qs):
-    """Exclude wikipedia 'internal' pages"""
-    qs = qs.exclude(title__startswith='User')
-    qs = qs.exclude(title__startswith='Wikipedia')
-    qs = qs.exclude(title__startswith='Talk:')
-    qs = qs.exclude(title__startswith='Template talk:')
-    qs = qs.exclude(title__startswith='File:')
-    return qs
-
 def about(request):
     return render_to_response('about.html')
 
@@ -88,7 +79,6 @@ def website_pages(request, website_id):
         sort_order = '-links__count'
 
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
-    wikipedia_pages = exclude_internal(wikipedia_pages)
     wikipedia_pages = wikipedia_pages.annotate(Count('links'))
     wikipedia_pages = wikipedia_pages.annotate(Max('links__created'))
     wikipedia_pages = wikipedia_pages.order_by(sort_order)

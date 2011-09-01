@@ -30,7 +30,7 @@
 {% endblock %}
 
 {% block tab_summary %}
-Wikipedia pages for <a href="{{ website.url }}">{{ website.name }}</a>. 
+There are currently {{ paginator.count }} Wikipedia pages that reference <a href="{{ website.url }}">{{ website.name }}</a>. 
 <br />
 <br />
 Put this <a href="{% url website_pages_feed website.id %}">feed</a> in your 
