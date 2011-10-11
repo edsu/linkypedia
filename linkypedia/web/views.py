@@ -94,15 +94,6 @@ def website_pages(request, website_id):
 
     return render_to_response('website_pages.html', dictionary=locals())
 
-
-def website_page_links(request, website_id, page_id):
-    website = get_object_or_404(m.Website, id=website_id)
-    wikipedia_page = m.WikipediaPage.objects.get(id=page_id)
-    links = m.Link.objects.filter(wikipedia_page=wikipedia_page,
-            website=website)
-
-    return render_to_response('website_page_links.html', dictionary=locals())
-
 def website_pages_feed(request, website_id, page_num=1):
     website = get_object_or_404(m.Website, id=website_id)
     wikipedia_pages = m.WikipediaPage.objects.filter(links__website=website)
@@ -122,6 +113,41 @@ def website_pages_feed(request, website_id, page_num=1):
     
     return render_to_response('website_pages_feed.atom', 
             mimetype="application/atom+xml", dictionary=locals())
+
+def website_links(request, website_id):
+    website = get_object_or_404(m.Website, id=website_id)
+    page_num = request.GET.get('page', 1)
+    page_num = int(page_num)
+
+    # make sure we support the order
+    order = request.GET.get('order', 'pages')
+    direction = request.GET.get('direction', 'desc')
+    other_direction = 'asc' if direction == 'desc' else 'desc'
+
+    if order == 'target' and direction =='asc':
+        sort_order = 'target'
+    elif order == 'target' and direction == 'desc':
+        sort_order = '-target'
+    elif order == 'pages' and direction == 'asc':
+        sort_order = 'wikipedia_page__count'
+    else:
+        sort_order = '-wikipedia_page__count'
+
+
+    links = m.Link.objects.filter(website=website)
+    links = links.values("target")
+    links = links.annotate(Count('wikipedia_page'))
+    links = links.order_by(sort_order)
+
+    paginator = DiggPaginator(links, 100)
+    page = paginator.page(page_num)
+    links = page.object_list
+
+    tab = 'links'
+    title = "website: %s" % website.url
+
+    return render_to_response('website_links.html', dictionary=locals())
+
 
 def website_categories(request, website_id, page_num=1):
     website = get_object_or_404(m.Website, id=website_id)

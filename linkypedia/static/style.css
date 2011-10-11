@@ -119,6 +119,16 @@ td.wikipedia_page {
     text-align: left;
 }
 
+td.wikipedia_category {
+    word-break: break-all;
+    text-align: left;
+}
+
+td.website_link {
+    word-break: break-all;
+    text-align: left;
+}
+
 td.link_count {
     text-align: right;
 }

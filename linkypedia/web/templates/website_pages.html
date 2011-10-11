@@ -34,7 +34,7 @@ There are currently {{ paginator.count }} Wikipedia pages that reference <a href
 <br />
 <br />
 Put this <a href="{% url website_pages_feed website.id %}">feed</a> in your 
-favorite feed reader and get notified of new pages that reference this 
+favorite feed reader and get notified of new Wikipedia pages that reference this 
 website. <a href="{% url website_pages_feed website.id %}">
 <img class="feed_icon" src="/static/feed.png" /></a>
 {% endblock %}
@@ -59,11 +59,7 @@ website. <a href="{% url website_pages_feed website.id %}">
                 {{ wikipedia_page.title }}
             </a>
         </td>
-        <td class="link_count">
-            <a href="{% url website_page_links website.id, wikipedia_page.id %}">
-                {{ wikipedia_page.links__count|intcomma }}
-            </a>
-        </td>
+        <td class="link_count">{{ wikipedia_page.links__count|intcomma }}</td>
         <td class="last_updated">
             {{ wikipedia_page.links__created__max|date:"Y-m-d H:m:s T" }}
         </td>

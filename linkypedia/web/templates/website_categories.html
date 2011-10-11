@@ -43,7 +43,7 @@ Wikipedia categories for <a href="{{ website.url }}">{{ website.name }}</a>.
     </tr>
     {% for category in categories %}
     <tr class="{% cycle 'odd' 'even' %}">
-        <td class="link_source">
+        <td class="wikipedia_category">
             <a href="http://en.wikipedia.org/wiki/Category:{{ category.title }}">
                 {{ category.title }}
             </a>
