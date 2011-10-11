@@ -235,6 +235,11 @@ def page(request, page_id):
     json_url = reverse("page_json", args=(page_id,))
     return render_to_response('page.html', dictionary=locals())
 
+def url(request, url):
+    links = m.Link.objects.filter(target=url)
+    links = links.order_by('website__name')
+    return render_to_response('url.html', dictionary=locals())
+
 def page_json(request, page_id):
     wikipedia_page = get_object_or_404(m.WikipediaPage, id=page_id)
     t = urllib.quote(wikipedia_page.title.replace(' ', '_'))
