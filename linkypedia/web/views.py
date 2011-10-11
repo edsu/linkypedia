@@ -1,3 +1,4 @@
+import os
 import json
 import urllib
 import datetime
@@ -59,16 +60,25 @@ def website_summary(request, website_id):
     return render_to_response('website_summary.html', dictionary=locals())
 
 def website_data(request, website_id):
+    """stream website link data as tab separated values
+    """
     website = get_object_or_404(m.Website, id=website_id)
 
-    def tsv_generator():
-        for link in website.links.all():
-            yield "\t".join([link.wikipedia_page.url, link.target]) + "\n"
+    def tsv():
+        # use a paginator since django/mysql wants to pull the entire
+        # results back into memory on the mysql client side 
+        paginator = Paginator(website.links.all(), 500)
+        page_num = 0
+        while page_num < paginator.num_pages:
+            page_num += 1
+            page = paginator.page(page_num)
+            for link in page.object_list:
+                yield "\t".join([link.wikipedia_page.url, link.target]) + "\n"
 
     filename = "linkypedia-" + slugify(website.name) + ".tsv"
-    response = HttpResponse(tsv_generator(), mimetype="text/tab-separated-values")
+    response = HttpResponse(tsv())
+    response['Content-Type'] = 'text/tab-separated-values'
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
-
     return response
 
 def website_pages(request, website_id):
