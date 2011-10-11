@@ -19,7 +19,7 @@ urlpatterns = patterns(
     url(r'^websites/(?P<website_id>\d+)/pages/feed/(?P<page_num>\d+)/$', 
         'website_pages_feed', name='website_pages_feed_page'),
 
-    url(r'^websites/(?P<website_id>\d)/links/$', 'website_links',
+    url(r'^websites/(?P<website_id>\d+)/links/$', 'website_links',
         name='website_links'),
 
     url(r'^websites/(?P<website_id>\d+)/categories/$', 'website_categories',
