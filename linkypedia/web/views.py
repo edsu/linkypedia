@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import urllib
 import datetime
@@ -236,6 +237,8 @@ def page(request, page_id):
     return render_to_response('page.html', dictionary=locals())
 
 def url(request, url):
+    if re.match('^http:/[^/]', url):
+        url = url.replace('http:/', 'http://')
     links = m.Link.objects.filter(target=url)
     links = links.order_by('website__name')
     return render_to_response('url.html', dictionary=locals())

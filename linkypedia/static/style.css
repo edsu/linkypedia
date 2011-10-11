@@ -1,6 +1,6 @@
 body {
     font-family: 'IM Fell DW Pica', helvetica;
-    font-size 12pt;
+    font-size: 16pt;
     margin: 10px 5% 5% 5%;
 }
 
@@ -135,7 +135,7 @@ td.link_count {
 
 td.last_updated {
     text-align: left;
-    width: 22%;
+    width: 25%;
 }
 
 td.favicon {
@@ -162,7 +162,7 @@ a {
 }
 
 #website_summary {
-    width: 60%;
+    width: 70%;
     margin-left: auto;
     margin-right: auto;
     border-color: #eeeeee;
@@ -172,7 +172,7 @@ a {
 }
 
 #website_details {
-    font-size: 11pt;
+    font-size: 14pt;
     width: 90%;
     margin-left: auto;
     margin-right: auto;
@@ -195,7 +195,7 @@ img.favicon {
 }
 
 #tabs {
-    width: 400px;
+    width: 500px;
     margin-left: auto;
     margin-right: auto;
 }

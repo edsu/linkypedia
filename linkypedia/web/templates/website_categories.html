@@ -5,8 +5,6 @@
 
 {% block pages %}
     {% if paginator.num_pages > 1 %} 
-    <br />
-    <br />
     {% if page.leading_range %}
     {% for num in page.leading_range %}
     <a class="page_link{% if page.number == num %} current page{% endif %}" href="{% url website_categories_page website_id num %}">{{ num }}</a>
@@ -31,7 +29,9 @@
 {% endblock %}
 
 {% block tab_summary %}
+<p>
 Wikipedia categories for <a href="{{ website.url }}">{{ website.name }}</a>.
+</p>
 {% endblock %}
 
 {% block tab_content %}
