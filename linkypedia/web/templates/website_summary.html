@@ -1,6 +1,13 @@
 {% extends "website.html" %}
 {% load humanize %}
 
+{% block tab_summary %}
+<p>
+Below you will find summary information for <a href="{{ website.url }}">{{ website.name }}</a> on Wikipedia.  If you would prefer to play around with the link data in Excel or your favorite data munging tool try downloading the <a href="{% url website_data website.id %}" rel="nofollow">raw tab sepearated values</a> for all the links. This data is made available using <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>, since that is what Wikipedia <a href="http://en.wikipedia.org/wiki/Wikipedia:About">use</a> themselves.
+</p>
+{% endblock %}
+
+
 {% block tab_content %}
 
 <table id="website_summary">
@@ -50,8 +57,4 @@
     {% endif %}
 </table>
 
-{% endblock %}
-
-{% block tab_summary %}
-Summary information for <a href="{{ website.url }}">{{ website.name }}</a>.
 {% endblock %}

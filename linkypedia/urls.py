@@ -10,6 +10,9 @@ urlpatterns = patterns(
     url(r'^websites/(?P<website_id>\d+)/$', 'website_summary',
         name='website_summary'),
 
+    url(r'^websites/(?P<website_id>\d+)/data/$', 'website_data',
+        name='website_data'),
+
     url(r'^websites/(?P<website_id>\d+)/pages/$', 'website_pages',
         name='website_pages'),
 

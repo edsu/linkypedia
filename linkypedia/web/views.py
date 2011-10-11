@@ -12,6 +12,7 @@ from django.db.models import Count, Max
 from django.template import RequestContext
 from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
+from django.template.defaultfilters import slugify
 from django.views.decorators.cache import cache_page
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
@@ -52,11 +53,23 @@ def websites_feed(request):
 def website_summary(request, website_id):
     website = get_object_or_404(m.Website, id=website_id)
     tab = 'summary'
-    tab_summary = "Summary Information for %s" % website.name
     title = "website: %s" % website.url
     if website.links.count() == CRAWL_CUTOFF:
         cutoff = CRAWL_CUTOFF
     return render_to_response('website_summary.html', dictionary=locals())
+
+def website_data(request, website_id):
+    website = get_object_or_404(m.Website, id=website_id)
+
+    def tsv_generator():
+        for link in website.links.all():
+            yield "\t".join([link.wikipedia_page.url, link.target]) + "\n"
+
+    filename = "linkypedia-" + slugify(website.name) + ".tsv"
+    response = HttpResponse(tsv_generator(), mimetype="text/tab-separated-values")
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    return response
 
 def website_pages(request, website_id):
     website = get_object_or_404(m.Website, id=website_id)
