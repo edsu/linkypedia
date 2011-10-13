@@ -12,18 +12,10 @@
 {% block tab_content %}
 <table id='page_summary'>
     <tr>
-        <th>Website</th>
         <th>Wikipedia Page</th>
     </tr>
     {% for link in links %}
     <tr class="{% cycle 'odd' 'even' %}">
-        <td>
-            <a href="{% url website_summary link.website.id %}">
-            {% if link.website.favicon_url %}
-            <img src="{{ link.website.favicon_url }}" class="favicon" title="{{ link.website.name }}" />
-            {% endif %}
-            </a>
-        </td>
         <td style="word-wrap: break-word;"><a href="{% url page link.wikipedia_page.id %}">{{ link.wikipedia_page.title }}</a></td>
     </tr>
     {% endfor %}

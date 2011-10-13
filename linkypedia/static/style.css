@@ -129,6 +129,11 @@ td.website_link {
     text-align: left;
 }
 
+td.wikipedia_pages {
+    text-align: right;
+    width: 10%;
+}
+
 td.link_count {
     text-align: right;
 }
@@ -173,7 +178,7 @@ a {
 
 #website_details {
     font-size: 14pt;
-    width: 90%;
+    width: 95%;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 15px;

@@ -74,7 +74,8 @@ def website_data(request, website_id):
             page_num += 1
             page = paginator.page(page_num)
             for link in page.object_list:
-                yield "\t".join([link.wikipedia_page.url, link.target]) + "\n"
+                row = [link.wikipedia_page.url, link.target]
+                yield "\t".join(row) + "\n"
 
     filename = "linkypedia-" + slugify(website.name) + ".tsv"
     response = HttpResponse(tsv())

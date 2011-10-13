@@ -47,7 +47,7 @@ There are currently {{ paginator.count|intcomma }} distinct resources at <a href
     {% for link in links %}
     <tr class="{% cycle 'odd' 'even' %}">
         <td class="website_link"><a href="{% url url link.target %}">{{ link.target }}</a></td>
-        <td>{{ link.wikipedia_page__count|intcomma }}</td>
+        <td class="wikipedia_pages">{{ link.wikipedia_page__count|intcomma }}</td>
     </tr>
     {% endfor %}
 </table>

@@ -28,7 +28,7 @@ who have contributed specific links to wikipedia articles.
                 {{ user.username }}
             </a>
         </td>
-        <td>{{ user.registration }}</td>
+        <td style="width: 250px;">{{ user.registration|date:"Y-m-d H:m:s T" }}</td>
         <td>
             {% if user.edit_count == 0 %}
             0
