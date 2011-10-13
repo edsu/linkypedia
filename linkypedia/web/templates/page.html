@@ -51,7 +51,7 @@
             {% endif %}
             </a>
         </td>
-        <td style="word-wrap: break-word;"><a href="{% url url link.target %}">{{ link.target }}</a></td>
+        <td style="word-wrap: break-word;"><a href="{% url url %}?url={{ link.target|urlencode }}">{{ link.target }}</a></td>
     </tr>
     {% endfor %}
 </table>

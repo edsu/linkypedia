@@ -16,7 +16,7 @@ from django.core.paginator import Paginator
 from django.core.urlresolvers import reverse
 from django.template.defaultfilters import slugify
 from django.views.decorators.cache import cache_page
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.shortcuts import render_to_response, get_object_or_404
 
 from linkypedia.rfc3339 import rfc3339
@@ -237,7 +237,11 @@ def page(request, page_id):
     json_url = reverse("page_json", args=(page_id,))
     return render_to_response('page.html', dictionary=locals())
 
-def url(request, url):
+def url(request):
+    url = request.GET.get("url")
+    if not url:
+        return HttpResponseNotFound("you need to supply the url query parameter")
+
     if re.match('^http:/[^/]', url):
         url = url.replace('http:/', 'http://')
     links = m.Link.objects.filter(target=url)
