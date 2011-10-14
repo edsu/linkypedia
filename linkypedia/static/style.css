@@ -140,7 +140,8 @@ td.link_count {
 
 td.last_updated {
     text-align: left;
-    width: 25%;
+    width: 210px;
+    padding-left: 10px;
 }
 
 td.favicon {
