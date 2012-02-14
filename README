@@ -15,6 +15,7 @@ Setup:
 - python manage.py syncdb
 - python manage.py runserver
 - python manage.py add_website http://www.loc.gov/
-- python manage.py crawl
-- python manage.py load_users
+- python manage.py crawl # look for wikipedia articles referencing websites
+- python manage.py load_users # scrape user info
+- python manage.py stats # fetch page view stats from wikipedia
 - optionally you can deploy with apache+mod_wsgi using conf/linkypedia.conf
