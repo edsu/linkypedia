@@ -22,6 +22,8 @@ class WikipediaPage(m.Model):
     last_modified = m.DateTimeField(null=False)
     title = m.TextField()
     categories = m.ManyToManyField(WikipediaCategory, related_name='pages')
+    views = m.IntegerField(default=0)
+    views_last = m.DateTimeField(null=True)
 
     @classmethod
     def new_from_wikipedia(klass, url):

@@ -90,7 +90,7 @@ def website_pages(request, website_id):
     page_num = int(page_num)
 
     # make sure we support the order
-    order = request.GET.get('order', 'update')
+    order = request.GET.get('order', 'views')
     direction = request.GET.get('direction', 'desc')
     other_direction = 'asc' if direction == 'desc' else 'desc'
 
@@ -98,6 +98,10 @@ def website_pages(request, website_id):
         sort_order = 'links__created__max'
     elif order == 'update' and direction == 'desc':
         sort_order = '-links__created__max'
+    elif order == 'views' and direction == 'desc':
+        sort_order = '-views'
+    elif order == 'views' and direction == 'asc':
+        sort_order = 'views'
     elif order == 'links' and direction == 'asc':
         sort_order = 'links__count'
     else:
@@ -116,6 +120,17 @@ def website_pages(request, website_id):
     tab = 'pages'
     tab_summary = "wikipedia pages %s" % website.name 
     title = "website: %s" % website.url
+
+    if request.GET.get('format') == 'json':
+        data = []
+        for page in wikipedia_pages:
+            data.append({'url': page.url, 
+                         'title': page.title,
+                         'views': page.views,
+                         'links': page.links__count})
+        return HttpResponse(json.dumps(data, indent=2),
+                            mimetype='application/json')
+
 
     return render_to_response('website_pages.html', dictionary=locals())
 

@@ -38,6 +38,7 @@
             </div>
         </summary>
         <linkypedia:links>{{ wpage.links__count }}</linkypedia:links>
+        <linkypedia:views>{{ wpage.views }}</linkypedia:views>
     </entry>
     {% endfor %}
 
