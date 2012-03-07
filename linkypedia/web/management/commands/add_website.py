@@ -31,7 +31,7 @@ class Command(BaseCommand):
         doc = etree.parse(html, parser)
         title = doc.xpath('/html/head/title')
         if len(title) > 0:
-            name = title[0].text
+            name = title[0].text.strip()
             if ' - ' in name:
                 name = name.split(' - ')[0]
         else:

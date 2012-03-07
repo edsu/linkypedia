@@ -234,6 +234,7 @@ def status(request):
         'website_name': link.website.name,
         'website_url': link.website.url,
         'created': rfc3339(link.created),
+        'linkypedia_url': 'http://' + request.get_host() + reverse("website_summary", args=[link.website.id])
     }
 
     crawls = m.Crawl.objects.filter(finished=None).order_by('-started')

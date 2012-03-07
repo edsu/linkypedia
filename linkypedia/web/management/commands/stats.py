@@ -42,5 +42,5 @@ class Command(BaseCommand):
                             p.views += int(cols[2])
                             p.views_last = start
                             p.save()
-                            print p.title, p.views, p.views_last
+                            print ("%s %s %s" % (p.title, p.views, p.views_last)).encode('utf-8')
             start += datetime.timedelta(hours=1)

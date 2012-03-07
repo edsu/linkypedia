@@ -7,7 +7,7 @@ function get_last_update(since) {
         var html = '<b>recently found: </b>' +
                '<a href="' + data.wikipedia_url + '">' +
                data.wikipedia_page_title + '</a> referencing <a href="' + 
-               data.target + '">' + data.website_name + '</a>';
+               data.linkypedia_url + '">' + data.website_name + '</a>';
 
         if (since != data.created) {
             $('#last_link').fadeOut('slow', function() {
