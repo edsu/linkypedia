@@ -43,11 +43,15 @@ There are currently {{ paginator.count }} Wikipedia pages that reference <a href
         <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=links&amp;direction={{ other_direction }}">Links</a></th>
         <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ other_direction }}" title="Number of views on Wikipedia in 2012">Views</a></th>
         <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction={{ direction }}">Last Update</a></th>
+        {% else %}{% if order == 'views' %}
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=links&amp;direction={{ direction }}">Links</a></th>
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ other_direction }}" title="Number of views on Wikipedia in 2012">Views</a></th>
+        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction={{ direction }}">Last Update</a></th>
         {% else %}
         <th><a href="{% url website_pages website.id %}?page=1&amp;order=links&amp;direction={{ direction }}">Links</a></th>
-        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ other_direction }}" title="Number of views on Wikipedia in 2012">Views</a></th>
-        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order={{ order }}&amp;direction={{ other_direction }}">Last Update</a></th>
-        {% endif %}
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ direction }}" title="Number of views on Wikipedia in 2012">Views</a></th>
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=update&amp;direction={{ other_direction }}">Last Update</a></th>
+        {% endif %}{% endif %}
     </tr>
     {% for wikipedia_page in wikipedia_pages %}
     <tr class="{% cycle 'odd' 'even' %}">
