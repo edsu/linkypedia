@@ -90,7 +90,7 @@ def website_pages(request, website_id):
     page_num = int(page_num)
 
     # make sure we support the order
-    order = request.GET.get('order', 'views')
+    order = request.GET.get('order', 'links')
     direction = request.GET.get('direction', 'desc')
     other_direction = 'asc' if direction == 'desc' else 'desc'
 
