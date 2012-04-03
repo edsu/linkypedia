@@ -41,15 +41,15 @@ There are currently {{ paginator.count }} Wikipedia pages that reference <a href
         <th>Wikipedia Page</th>
         {% if order == 'links' %}
         <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=links&amp;direction={{ other_direction }}">Links</a></th>
-        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ other_direction }}" title="Recent Views on English Wikipedia">Views</a></th>
-        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction={{ direction }}">Last Update</a></th>
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction=desc" title="Recent Views on English Wikipedia">Views</a></th>
+        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction=desc">Last Update</a></th>
         {% else %}{% if order == 'views' %}
-        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=links&amp;direction={{ direction }}">Links</a></th>
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=links&amp;direction=desc">Links</a></th>
         <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ other_direction }}" title="Recent Views on English Wikipedia">Views</a></th>
-        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction={{ direction }}">Last Update</a></th>
+        <th><a href="{% url website_pages website.id %}?page=1&amp;order=update&amp;direction=desc">Last Update</a></th>
         {% else %}
-        <th><a href="{% url website_pages website.id %}?page=1&amp;order=links&amp;direction={{ direction }}">Links</a></th>
-        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ direction }}" title="Recent Views on English Wikipedia">Views</a></th>
+        <th><a href="{% url website_pages website.id %}?page=1&amp;order=links&amp;direction=desc">Links</a></th>
+        <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=views&amp;direction=desc" title="Recent Views on English Wikipedia">Views</a></th>
         <th><a href="{% url website_pages website.id %}?page={{ page.number }}&amp;order=update&amp;direction={{ other_direction }}">Last Update</a></th>
         {% endif %}{% endif %}
     </tr>
