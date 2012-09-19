@@ -30,6 +30,7 @@ class Command(BaseCommand):
         now = datetime.datetime.now()
         while start < now:
             url = "http://dumps.wikimedia.org/other/pagecounts-raw/%(year)i/%(year)i-%(month)02i/pagecounts-%(year)i%(month)02i%(day)02i-%(hour)02i0000.gz" % {"year": start.year, "month": start.month, "day": start.day, "hour": start.hour}
+            print url
             r = requests.get(url)
             r.headers['content-encoding'] = 'gzip'
             for line in r.iter_lines():

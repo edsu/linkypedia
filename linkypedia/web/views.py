@@ -1,6 +1,7 @@
 import os
 import re
 import json
+import time
 import urllib
 import datetime
 import urlparse
@@ -120,6 +121,7 @@ def website_pages(request, website_id):
     tab = 'pages'
     tab_summary = "wikipedia pages %s" % website.name 
     title = "website: %s" % website.url
+    stats_date = time.strftime("%Y%m")
 
     if request.GET.get('format') == 'json':
         data = []

@@ -61,7 +61,7 @@ There are currently {{ paginator.count }} Wikipedia pages that reference <a href
             </a>
         </td>
         <td class="link_count"><a href="{% url page wikipedia_page.id %}">{{ wikipedia_page.links__count|intcomma }}</a></td>
-        <td>{{ wikipedia_page.views|intcomma }}</td>
+        <td><a href="http://stats.grok.se/en/{{stats_date}}/{{ wikipedia_page.title }}">{{ wikipedia_page.views|intcomma }}</a></td>
         <td class="last_updated">
             {{ wikipedia_page.links__created__max|date:"Y-m-d H:m:s T" }}
         </td>
