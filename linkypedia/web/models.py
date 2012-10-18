@@ -96,6 +96,10 @@ class Website(m.Model):
     def wikipedia_pages(self):
         return WikipediaPage.objects.filter(links__website=self).distinct()
 
+    @property
+    def url_cleaned(self):
+        return self.url.replace("*.", "")
+
     def __unicode__(self):
         return "%s <%s> (%s)" % (self.name, self.url, self.id)
 
