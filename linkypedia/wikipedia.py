@@ -11,7 +11,7 @@ import getpass
 import logging
 import urllib2
 
-import irclib
+import irc.client
 import BeautifulSoup
 
 from web import tasks
@@ -20,7 +20,7 @@ RETRIES_BETWEEN_API_ERRORS = 5
 IRC_MESSAGE_PATTERN = re.compile('\[\[(.+?)\]\] (.+)? (http:.+?)? (?:\* (.+?) \*)? (?:\(([+-]\d+)\))? (.+)?')
 
 
-class WikipediaUpdatesClient(irclib.SimpleIRCClient):
+class WikipediaUpdatesClient(irc.client.SimpleIRCClient):
     """Fetch live update feed from irc://irc.wikimedia.org/en.wikipedia
     """
 
