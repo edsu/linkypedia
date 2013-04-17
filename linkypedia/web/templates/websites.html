@@ -2,7 +2,7 @@
 {% load humanize %}
 
 {% block extra_head %}
-    <link rel="alternate" href="{% url websites_feed %}" type="application/atom+xml" title="Atom Feed for Linkypedia Website Crawl Activity" />
+    <link rel="alternate" href="{% url "websites_feed" %}" type="application/atom+xml" title="Atom Feed for Linkypedia Website Crawl Activity" />
     <script src="/static/status.js" type="text/javascript"></script>
     <title>linkypedia</title>
 {% endblock %}
@@ -11,10 +11,7 @@
 <div id="slogan">
     <a href="/about" style="text-decoration: underline">linkypedia</a> helps you
     <strong>explore</strong> how your web content is used on wikipedia,
-    <strong>extract</strong> crowd-sourced information about your web resources,
-    and <strong>connect</strong> with wikipedians who are using your stuff. More
-    about the rationale for linkypedia can be found <a href="/about">here</a>.</
-    <a href="{% url websites_feed %}"><img class="feed_icon" src="/static/feed.png" /></a>
+    <strong>extract</strong> crowd-sourced information about your web resources, and <strong>connect</strong> with wikipedians who are using your stuff. More about the rationale for linkypedia can be found <a href="/about">here</a>. <a href="{% url "websites_feed" %}"><img class="feed_icon" src="/static/feed.png" /></a>
 </div>
 
 <p id="update">
@@ -26,7 +23,7 @@
         {% for website in websites %}
         <tr>
         <td>
-            <a href="{% url website_summary website.id %}" title="{{ website.url }}">
+            <a href="{% url "website_summary" website.id %}" title="{{ website.url }}">
             {% if website.favicon_url %}
             <img src="{{ website.favicon_url }}" class="favicon" title="{{ website.name }}"/>
             {% endif %}

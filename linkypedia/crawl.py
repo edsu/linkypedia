@@ -8,6 +8,7 @@ import logging
 import datetime
 
 from django.db import reset_queries
+from django.core.paginator import Paginator
 
 from linkypedia.web import models as m
 from linkypedia import wikipedia
@@ -93,15 +94,11 @@ def _user_pages():
     # instead of pulling back all pages (django pulls into memory)
     # we look for a chunk at a time
     q = m.WikipediaPage.objects.filter(title__startswith='User').distinct()
-    db_chunk_size = 1000
-    start = 0
-    total = q.count()
-
-    while start < total:
-        for p in q[start : start + db_chunk_size]:
+    paginator = Paginator(q, 20)
+    for page_num in range(1, paginator.num_pages + 1):
+        for p in paginator.page(page_num).object_list:
             if p.associated_username():
                 yield p
-        start += db_chunk_size
 
 def _wikipedia_users(user_pages):
     username_page_map = dict([[p.associated_username(), p] for p in user_pages])

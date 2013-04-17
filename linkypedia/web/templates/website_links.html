@@ -6,21 +6,21 @@
     {% if paginator.num_pages > 1 %}
     {% if page.leading_range %}
     {% for num in page.leading_range %}
-    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_links website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
+    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url "website_links" website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
     {% endfor %}
     …
     {% endif %}
 
     {% if page.main_range %}
     {% for num in page.main_range %}
-    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_links website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
+    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url "website_links" website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
     {% endfor %}
     {% endif %}
 
     {% if page.trailing_range %}
     …
     {% for num in page.trailing_range %}
-    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url website_links website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
+    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url "website_links" website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
     {% endfor %}
     {% endif %}
     {% endif %}
@@ -37,16 +37,16 @@ There are currently {{ paginator.count|intcomma }} distinct resources at <a href
 <table id="website_details">
     <tr>
         {% if order == 'target' %}
-        <th><a href="{% url website_links website.id %}?page={{ page.number }}&amp;order=target&amp;direction={{ other_direction }}">Website URL</a></th>
-        <th><a href="{% url website_links website.id %}?page=1&amp;order=pages&amp;direction={{ direction }}">Wikipedia Pages</a></th>
+        <th><a href="{% url "website_links" website.id %}?page={{ page.number }}&amp;order=target&amp;direction={{ other_direction }}">Website URL</a></th>
+        <th><a href="{% url "website_links website.id" %}?page=1&amp;order=pages&amp;direction={{ direction }}">Wikipedia Pages</a></th>
         {% else %}
-        <th><a href="{% url website_links website.id %}?page=1&amp;order=target&amp;direction={{ direction }}">Website URL</a></th>
-        <th><a href="{% url website_links website.id %}?page={{ page.number }}&amp;order=pages&amp;direction={{ other_direction }}">Wikipedia Pages</a></th>
+        <th><a href="{% url "website_links" website.id %}?page=1&amp;order=target&amp;direction={{ direction }}">Website URL</a></th>
+        <th><a href="{% url "website_links" website.id %}?page={{ page.number }}&amp;order=pages&amp;direction={{ other_direction }}">Wikipedia Pages</a></th>
         {% endif %}
     </tr>
     {% for link in links %}
     <tr class="{% cycle 'odd' 'even' %}">
-        <td class="website_link"><a href="{% url url %}?url={{ link.target|urlencode }}">{{ link.target }}</a></td>
+        <td class="website_link"><a href="{% url "url" %}?url={{ link.target|urlencode }}">{{ link.target }}</a></td>
         <td class="wikipedia_pages">{{ link.wikipedia_page__count|intcomma }}</td>
     </tr>
     {% endfor %}

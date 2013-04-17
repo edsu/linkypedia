@@ -16,7 +16,7 @@
     </tr>
     {% for link in links %}
     <tr class="{% cycle 'odd' 'even' %}">
-        <td style="word-wrap: break-word;"><a href="{% url page link.wikipedia_page.id %}">{{ link.wikipedia_page.title }}</a></td>
+        <td style="word-wrap: break-word;"><a href="{% url "page" link.wikipedia_page.id %}">{{ link.wikipedia_page.title }}</a></td>
     </tr>
     {% endfor %}
 </table>

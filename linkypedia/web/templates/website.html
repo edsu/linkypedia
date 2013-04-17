@@ -12,19 +12,19 @@
 <div id="tabs">
     {% if website %}
     <span class="{% if tab == "summary" %}active_tab{% else %}inactive_tab{% endif %}">
-        <a href="{% url website_summary website.id %}">summary</a>
+        <a href="{% url "website_summary" website.id %}">summary</a>
     </span>
     <span class="{% if tab == "pages" %}active_tab{% else %}inactive_tab{% endif %}">
-        <a href="{% url website_pages website.id %}">pages</a>
+        <a href="{% url "website_pages" website.id %}">pages</a>
     </span>
     <span class="{% if tab == "links" %}active_tab{% else %}inactive_tab{% endif %}">
-        <a href="{% url website_links website.id %}">links</a>
+        <a href="{% url "website_links" website.id %}">links</a>
     </span>
     <span class="{% if tab == "categories" %}active_tab{% else %}inactive_tab{% endif %}">
-        <a href="{% url website_categories website.id %}">categories</a>
+        <a href="{% url "website_categories" website.id %}">categories</a>
     </span>
     <span class="{% if tab == "users" %}active_tab{% else %}inactive_tab{% endif %}">
-        <a href="{% url website_users website.id %}">users</a>
+        <a href="{% url "website_users" website.id %}">users</a>
     </span>
     {% endif %}
 </div>
