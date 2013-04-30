@@ -14,7 +14,7 @@
 
     {% if page.main_range %}
     {% for num in page.main_range %}
-    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url "website_pages website_id" %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
+    <a class="page_link {% if page.number == num %}current_page{% endif %}" href="{% url "website_pages" website_id %}?page={{ num }}&amp;order={{ order }}&amp;direction={{ direction }}">{{ num }}</a>
     {% endfor %}
     {% endif %}
 
