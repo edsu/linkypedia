@@ -41,17 +41,11 @@ There are currently {{ paginator.count }} Wikipedia pages that reference <a href
         <th>Wikipedia Page</th>
         {% if order == 'links' %}
         <th><a href="{% url "website_pages" website.id %}?page={{ page.number }}&amp;order=links&amp;direction={{ other_direction }}">Links</a></th>
-        <th><a href="{% url "website_pages" website.id %}?page={{ page.number }}&amp;order=views&amp;direction=desc" title="Recent Views on English Wikipedia">Views</a></th>
-        <th><a href="{% url "website_pages" website.id %}?page=1&amp;order=update&amp;direction=desc">Last Update</a></th>
-        {% else %}{% if order == 'views' %}
-        <th><a href="{% url "website_pages" website.id %}?page={{ page.number }}&amp;order=links&amp;direction=desc">Links</a></th>
-        <th><a href="{% url "website_pages" website.id %}?page={{ page.number }}&amp;order=views&amp;direction={{ other_direction }}" title="Recent Views on English Wikipedia">Views</a></th>
         <th><a href="{% url "website_pages" website.id %}?page=1&amp;order=update&amp;direction=desc">Last Update</a></th>
         {% else %}
         <th><a href="{% url "website_pages" website.id %}?page=1&amp;order=links&amp;direction=desc">Links</a></th>
-        <th><a href="{% url "website_pages" website.id %}?page={{ page.number }}&amp;order=views&amp;direction=desc" title="Recent Views on English Wikipedia">Views</a></th>
         <th><a href="{% url "website_pages" website.id %}?page={{ page.number }}&amp;order=update&amp;direction={{ other_direction }}">Last Update</a></th>
-        {% endif %}{% endif %}
+        {% endif %}
     </tr>
     {% for wikipedia_page in wikipedia_pages %}
     <tr class="{% cycle 'odd' 'even' %}">
@@ -61,7 +55,6 @@ There are currently {{ paginator.count }} Wikipedia pages that reference <a href
             </a>
         </td>
         <td class="link_count"><a href="{% url "page" wikipedia_page.id %}">{{ wikipedia_page.links__count|intcomma }}</a></td>
-        <td><a href="http://stats.grok.se/en/{{stats_date}}/{{ wikipedia_page.title }}">{{ wikipedia_page.views|intcomma }}</a></td>
         <td class="last_updated">
             {{ wikipedia_page.links__created__max|date:"Y-m-d H:m:s T" }}
         </td>
